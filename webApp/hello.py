@@ -87,10 +87,20 @@ def getMedicationDetails():
 	if request.method == 'POST':
 		child_id = request.form['child_id']
 		db,client = connect_to_db()
-		all_children = db.children.find({'house_id': house_id})
+		med_details = db.MedicineSchedule.find({'child_id': child_id,'AdministrationTime':{'$gte': datetime.datetime.now().replace(hour=0,minute =0, second = 0,  microsecond =0), '$lte':(datetime.datetime.now()+datetime.timedelta(days=1)).replace(hour=0, second=0, minute = 0,  microsecond=0)}})
 		client.close()
-		return all_children
+		return med_details
 	return None
+@app.route('/logMedicineGiven', methods = ["POST"])
+def logMedicineGiven():
+	if request.method == 'POST':
+		sched_id = request.form['schedule_id']
+		db, client = connect_to_db()
+		med_details = db.MedicineSchedule.findAndModify({'_id': sched_id},{'$set':{'done':True}})
+		client.close()
+		return True
+	return False
+
 
 def createChildren():
 	if request.method == 'POST':
