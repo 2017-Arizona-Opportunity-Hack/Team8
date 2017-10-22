@@ -1,11 +1,41 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View, Image } from "react-native";
+import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 
 export default class LoginScreen extends Component<{}> {
+  handleSignIn() {
+    console.log('handleLogin');
+  }
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Create the Login Screen Here!</Text>
+      <View style={{ paddingVertical: 50 }}>
+        <Card
+          containerStyle={{ borderRadius: 10 }}>
+          <Image
+            source={require('./images/logo.png')}
+            style={{
+              marginTop: 50,
+              marginBottom: 50}}
+          />
+          <FormLabel>Email</FormLabel>
+          <FormInput placeholder="Please enter your email address" />
+          <FormLabel>Password</FormLabel>
+          <FormInput secureTextEntry placeholder="Please enter your password" />
+
+          <Button
+            buttonStyle={{
+              marginTop: 30,
+              marginBottom: 50
+            }}
+            backgroundColor="#03A9F4"
+            title="SIGN IN"
+            onPress={() => {
+              navigate("MainS");
+            }}
+          />
+        </Card>
       </View>
     );
   }
