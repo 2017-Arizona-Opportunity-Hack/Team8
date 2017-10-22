@@ -48,25 +48,65 @@ def login():
 	else:
 		return render_template('index.html') 
 
+
+@app.route('/parentlogin', methods = ['POST'])
+def parentlogin():
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
+		db,client = connect_to_db()
+		dict = db.Parents.find_one({'username': username}, {'username':1, 'password': 1})
+		if dict:
+			if dict['password'] == password:
+				#session['username'] = request.form['username']
+				update_dict = {}
+				timestamp= datetime.datetime.now()
+				db.Parents.update_many({},{'$set':{'logged_in': False}})
+				db.Parents.find_one_and_update({'username': username},{'$push':{'timestamp': timestamp}, '$set':{'logged_in': True}})
+				client.close()
+				return redirect(url_for('show_user_profile', username=username))
+		else:
+			client.close()
+			return "No such House Parent registered with the website"
+	else:
+		return "Only POST request allowed"
+
 		
 @app.route('/logout', methods = ["POST"])
 def logout():
    # remove the username from the session if it is there
-
    if request.method == 'POST':
-   		db,client = connect_to_db()
+		db,client = connect_to_db()
 		#session.pop('username', None)
 		print request.form['username']
 		db.admin.find_one_and_update({'username': request.form['username']},{'$set':{'logged_in': False}})
-   		client.close()
-   		return "logged out"
+		client.close()
+		return "logged out"
+
+#mobile app function
+@app.route('/parentlogout', methods=["POST"])
+def parentlogout():
+   # remove the username from the session if it is there
+
+   if request.method == 'POST':
+	   db, client = connect_to_db()
+	   # session.pop('username', None)
+	   print request.form['username']
+	   db.Parent.find_one_and_update({'username': request.form['username']}, {'$set': {'logged_in': False}})
+	   client.close()
+	   return "logged out"
+
 
 #mobileapp api
-@app.route('/gethouses', methods = ["GET"])
+@app.route('/getallhouses', methods = ["POST"])
 def getAllHouses():
-	if request.method == 'GET':
+	if request.method == 'POST':
+		username = request.form["username"]
 		db,client = connect_to_db()
-		all_houses = db.houses.find({},{'name', 'house_id'})
+		house_ids = db.Parents.find({"username":username},{'house_id'})
+		all_houses = []
+		for house_id in house_ids:
+			all_houses.extend(db.houses.find({'house_id'},{'name', 'house_id'}))
 		client.close()
 		return all_houses
 	return None
