@@ -5,6 +5,7 @@ import json
 from bson import ObjectId
 from bson.json_util import dumps
 from flask_cors import CORS, cross_origin
+from medSched import createMedSchedule
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -322,6 +323,7 @@ def togglechild():
         toggle_child['toggle_inhouse'] = not(toggle_child['toggle_inhouse'])
         db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse':toggle_child['toggle_inhouse'] }})
         client.close()
+        createMedSchedule()
         return "True"
     return "False"
 
