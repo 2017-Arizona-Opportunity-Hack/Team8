@@ -166,7 +166,7 @@ def logMedicineGiven():
 def createChildren():
     if request.method == 'POST':
         child_obj = {}
-        if all(k in request.form for k in [first_name, last_name]):
+        if all(k in request.form for k in ['first_name', 'last_name']):
             child_obj['first_name'] = request.form['first_name']
             child_obj['last_name'] = request.form['last_name']
             if request.form['house_id']:
@@ -186,7 +186,7 @@ def createChildren():
 def updateChild():
     if request.method == 'POST':
         db, client = connect_to_db()
-        dbChildObj = db.Children.find({"first_name":request.form[first_name],"last_name": request.form['last_name']})[0]
+        dbChildObj = db.Children.find({"first_name":request.form['first_name'],"last_name": request.form['last_name']})[0]
         for key,value in request.form:
             if key not in dbChildObj:
                 dbChildObj[key] = value
@@ -219,7 +219,7 @@ def displayAllChildren():
         all_children = db.Children.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
         list1=[]
         for c in all_children:
-            house_name = db.Houses.find({"house_id"},{"_id":0,"name":1})[0]['name']
+            house_name = db.Houses.find({"house_id":c["house_id"]},{"_id":0,"name":1})[0]['name']
             c['house_name'] = house_name
             list1.append(c)
         print list1
@@ -235,7 +235,7 @@ def displayAllParents():
         all_parents = db.Parents.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
         list1=[]
         for c in all_parents:
-            for hid in house_id:
+            for hid in c['house_id']:
                 house_name = db.Houses.find({"house_id":hid},{"_id":0,"name":1})[0]['name']
                 c['house_name'].append(house_name)
             list1.append(c)
@@ -245,25 +245,25 @@ def displayAllParents():
     return None
 
 #parent crud
-@app.route('/addParent', method = ["POST"])
+@app.route('/addParent', methods = ["POST"])
 def addParent():
-	if request.method == 'POST':
-		firstname = request.form['parentFirstName']
-		lastname = request.form['parentLastName']
-		username = request.form['parentUsername']
-		password = request.form['parentPassword']
-		email = request.form['parentEmail']
-		phone = request.form['parentPhone']
-		house = request.form['parentHouse']
+    if request.method == 'POST':
+        firstname = request.form['parentFirstName']
+        lastname = request.form['parentLastName']
+        username = request.form['parentUsername']
+        password = request.form['parentPassword']
+        email = request.form['parentEmail']
+        phone = request.form['parentPhone']
+        house = request.form['parentHouse']
 
-		db, client = connect_to_db()
+        db, client = connect_to_db()
 
-		db.parent.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
-		client.close()
-		return "True"
-	return "False"
+        db.parent.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
+        client.close()
+        return "True"
+    return "False"
 
-@app.route('/editParent', method = ["POST"])
+@app.route('/editParent', methods = ["POST"])
 def editParent():
 	if request.method == 'POST':
 		firstname = request.form['parentFirstName']
@@ -284,8 +284,8 @@ def editParent():
 	return "False"
 
 
-@app.route('/deleteParent', method = ["POST"])
-def editParent():
+@app.route('/deleteParent', methods = ["POST"])
+def deleteParent():
 	if request.method == 'POST':
 		username = request.form['parentUserName']
 		db, client = connect_to_db()
