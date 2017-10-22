@@ -10,7 +10,7 @@
     margin-top: 50px;
 }
 
-#field{
+#medicinefield{
 
     background-color: lightcyan;
     padding: 10px;
@@ -59,4 +59,23 @@ a{
 .btn-info{
     background-color: #E98735;
     border-color: #E98735;
+}
+
+.active{
+    font-size: 30px;
+    color: black;
+    border-bottom: 5px solid black;
+}
+
+.report{
+    margin-top: 150px;
+
+}
+
+.end-date{
+    padding: 5px;
+    margin-left: 10px;
+}
+.start-date{
+    padding: 5px;
 }

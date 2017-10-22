@@ -33,7 +33,9 @@
                     <a class="nav-link navParent " href="#">Parent</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link navAbout" href="#">About</a>
+                    <a class="nav-link navAbout" href="#">Report</a>
+
+
                 </li>
 
             </ul>
@@ -49,138 +51,26 @@
     <!--Nav bar ends here-->
 
 
-    <!--All forms end here-->
+    <!--All forms starts here-->
     <div class="parentTab center" id="parentTab">
         <br>
         <button id="addNewParent" type="submit" class="btn btn-primary">Add new Parent</button>
-
-        <div>
-            <br>
-            <div class="row">
-                <div class="col-md-9">
-
-                    <div class="card card-inverse card-primary mb-3 text-left">
-                        <div class="card-block">
-                            <blockquote class="card-blockquote">
-                                <p>Mr.Brown</p>
-                                <p>Gold House</p>
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-9">
-
-                    <div class="card card-inverse card-primary mb-3 text-left">
-                        <div class="card-block">
-                            <blockquote class="card-blockquote">
-                                <p>Mr.Pink</p>
-                                <p>Gray House</p>
-
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-9">
-
-                    <div class="card card-inverse card-primary mb-3 text-left">
-                        <div class="card-block">
-                            <blockquote class="card-blockquote">
-                                <p>Mr.White</p>
-                                <p>Little House</p>
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
-
+        <br>
+        <br>
+        <div id="parentResults"></div>
         </div>
-
-
     </div>
 
     <div class="childTab center" id="childTab">
+        <div id="results"></div>
         <br>
         <button id="addNewChild" type="submit" class="btn btn-primary">Add new Child</button>
 
         <div>
             <br>
-             <div class="row">
-                <div class="col-md-9">
+            <div id="childrenResults"></div>
 
-                <div class="card card-inverse card-primary mb-3 text-left">
-                <div class="card-block">
-                                <blockquote class="card-blockquote">
-                                    <p>Lord Vader</p>
-                                    <p>Baratheon House</p>
-                                </blockquote>
-                            </div>
-                        </div>
 
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-9">
-
-                    <div class="card card-inverse card-primary mb-3 text-left">
-                        <div class="card-block">
-                            <blockquote class="card-blockquote">
-                                <p>Lord Baelish</p>
-                                <p>Little Finger House</p>
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-9">
-
-                    <div class="card card-inverse card-primary mb-3 text-left">
-                        <div class="card-block">
-                            <blockquote class="card-blockquote">
-                                <p>Lord Voldemort</p>
-                                <p>Dank House</p>
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-md-3 dp">
-                    <a href="https://placeholder.com"><img src="http://via.placeholder.com/80x80"></a>
-                </div>
-
-            </div>
 
         </div>
 
@@ -234,7 +124,11 @@
     <div class="aboutTab center" id="aboutTab">
 
         <div>
-            Somethig about
+            <form name="reportDate" class="report" >
+                <input id="start-date" type=date step=1 min=2017-01-01>
+                <input id="end-date" type=date step=1 min=2017-01-01>
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+            </form>
         </div>
 
     </div>
@@ -247,16 +141,16 @@
            <h5> Add New House
            </h5>
         </div>
-        <form name="houseForm" onsubmit="return validateHouse()">
+        <form name="houseForm"  action="https://sunshine-acres.herokuapp.com/addHouse" method="post">
             <div class="form-group">
                 <label for="houseName">House Name</label>
-                <input id="houseName" class="form-control" type="text" placeholder="...">
+                <input id="houseName" name="house_name" class="form-control" type="text" placeholder="">
 
             </div>
 
             <div class="form-group">
-                <label for="houseNumber">Number</label>
-                <input id="houseNumber" class="form-control" type="text" placeholder="...">
+                <label for="houseNumber">Address</label>
+                <input id="houseNumber" name="address" class="form-control" type="text" placeholder="">
 
             </div>
 
@@ -272,37 +166,62 @@
             <h5> Add New Parent
             </h5>
         </div>
-        <form name="parentForm" onsubmit="return validateParent()">
+        <form name="parentForm" action="https://sunshine-acres.herokuapp.com/addParent" method="post">
             <div class="form-group">
                 <label for="parentFirstName">First Name</label>
-                <input id="parentFirstName" class="form-control" type="text" placeholder="...">
+                <input id="parentFirstName" name="parentFirstName" class="form-control" type="text" placeholder="">
 
             </div>
 
             <div class="form-group">
                 <label for="parentLastName">Last Name</label>
-                <input id="parentLastName" class="form-control" type="text" placeholder="...">
+                <input id="parentLastName" name="parentLastName" class="form-control" type="text" placeholder="">
 
             </div>
 
             <div class="form-group">
                 <label for="parentEmail">Email address</label>
-                <input type="email" class="form-control" id="parentEmail" aria-describedby="emailHelp" placeholder="Enter email">
+                <input type="email" class="form-control" name="parentEmail" id="parentEmail" aria-describedby="emailHelp" placeholder="">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
 
             <div class="form-group">
                 <label for="parentPhone">Phone Number</label>
-                <input id="parentPhone" class="form-control" type="text" placeholder="Enter phone number...">
+                <input id="parentPhone" name="parentPhone" class="form-control" type="text" placeholder="">
                 <small id="phoneHelp" class="form-text text-muted">XXX-XXX-XXXX</small>
 
             </div>
 
             <div class="form-group">
-                <label for="parentHouseName">House Name</label>
-                <input id="parentHouseName" class="form-control" type="text" placeholder="Enter House name...">
+                <label for="parentUsername">Username</label>
+                <input id="parentUsername" name="parentUsername" class="form-control" type="text" placeholder="">
 
             </div>
+
+            <div class="form-group">
+                <label for="parentPassword">Password</label>
+                <input id="parentPassword" name="parentPassword" class="form-control" type="password" placeholder="">
+
+            </div>
+
+            <!--<div class="control-group" id="fields">-->
+                <!--<label class="control-label" for="field1">Houses</label>-->
+                <!--<div class="controls" id="profs">-->
+                    <!--<form class="input-append">-->
+                        <!--<div id="field"><input autocomplete="off" class="input form-control" id="field1" name="prof1" type="text" placeholder="" data-items="8"/><button id="b1" class="btn add-more-houses" type="button">+</button></div>-->
+                    <!--</form>-->
+                    <!--<br>-->
+                    <!--<small>Press + to add another house</small>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div class="form-group">
+                <label for="parentHouse">Parent House</label>
+                <input id="parentHouse" name="parentHouse" class="form-control" type="text" placeholder="">
+                <small id="phoneHouse" class="form-text text-muted">House1,House2</small>
+
+            </div>
+
 
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -310,116 +229,126 @@
     </div>
 
 
-    <!--Add new child-->
-    <div id="child" class="add-child form-general">
-        <div class="" >
-            <div class="form-title text-center">
-                <h5> Add New Child
-                </h5>
+<!--Add new child-->
+<div id="child" class="add-child form-general">
+    <div class="" >
+        <div class="form-title text-center">
+            <h5> Add New Child
+            </h5>
+        </div>
+        <form name="childForm" onsubmit="printValues()"><div class="form-group">
+            <label for="childFirstName">First Name</label>
+            <input id="childFirstName" class="form-control" type="text" placeholder="">
+
+        </div>
+
+            <div class="form-group">
+
+                <label for="childLastName">Last Name</label>
+                <input id="childLastName" class="form-control" type="text" placeholder="">
+
             </div>
-                <form name="childForm" onsubmit="return validateChild()"><div class="form-group">
-                    <label for="childFirstName">First Name</label>
-                    <input id="childFirstName" class="form-control" type="text" placeholder="Enter First name...">
 
-                </div>
 
-                <div class="form-group">
 
-                    <label for="childLastName">Last Name</label>
-                    <input id="childLastName" class="form-control" type="text" placeholder="Enter Last name...">
+            <div class="form-group">
 
-                </div>
+                <label for="childHouseName">House Name</label>
+                <input id="childHouseName" class="form-control" type="text" placeholder="">
 
-                <div class="form-group">
+            </div>
 
-                    <label for="childHouseName">House Name</label>
-                    <input id="childHouseName" class="form-control" type="text" placeholder="Enter House name...">
-
-                </div>
-
-                    <div id="field">
-                        <div id="field0">
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicineName">Medicine Name</label>
-                                <div class="">
-                                    <input id="medicineName" name="medicineName" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicineDosage">Medicine Dosage</label>
-                                <div class="">
-                                    <input id="medicineDosage" name="medicineDosage" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicinePhysician">Physician</label>
-                                <div class="">
-                                    <input id="medicinePhysician" name="medicinePhysician" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicineReason">Reason</label>
-                                <div class="">
-                                    <input id="medicineReason" name="medicineReason" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicineDateofPrescription">Date of Prescription</label>
-                                <div class="">
-                                    <input id="medicineDateofPrescription" name="medicineDateofPrescription" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicinePhone">Physician's Phone Number</label>
-                                <div class="">
-                                    <input id="medicinePhone" name="medicinePhone" type="text" placeholder="" class="form-control input-md">
-
-                                </div>
-                            </div>
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class=" control-label" for="medicineTime">When to take</label>
-                                <div class="">
-                                    <input id="medicineTime" name="medicineTime" type="text" placeholder="" class="form-control input-md">
-                                    <small id="medicineTimeHelp" class="form-text text-muted">Enter "0900+1500+2200" for 9 a.m, 3 p.m and 8 p.m</small>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Button -->
+            <div id="field">
+                <div id="field0">
+                    <!-- Text input-->
                     <div class="form-group">
+                        <label class=" control-label" for="medicineName">Medicine Name</label>
                         <div class="">
-                            <button id="add-more" name="add-more" class="btn btn-primary">Add More Medicine</button>
+                            <input class="1" id="medicineName" name="medicineName" type="text" placeholder="" class="form-control input-md">
+
                         </div>
                     </div>
+
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class=" control-label" for="medicineDosage">Medicine Dosage</label>
+                        <div class="">
+                            <input class="2" id="medicineDosage" name="medicineDosage" type="text" placeholder="" class="form-control input-md">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label" for="medicineInstructions">Instructions</label>
+                        <div class="">
+                        <input class="8" id="medicineInstructions" class="form-control" type="text" placeholder="">
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class="control-label" for="medicinePhysician">Physician</label>
+                        <div class="">
+                            <input class="3" id="medicinePhysician" name="medicinePhysician" type="text" placeholder="" class="form-control input-md">
+
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class=" control-label" for="medicineReason">Reason</label>
+                        <div class="">
+                            <input class="4" id="medicineReason" name="medicineReason" type="text" placeholder="" class="form-control input-md">
+
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class=" control-label" for="medicineDateofPrescription">Date of Prescription</label>
+                        <div class="">
+                            <input class="5" id="medicineDateofPrescription" name="medicineDateofPrescription" type="text" placeholder="" class="form-control input-md">
+
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class=" control-label" for="medicinePhone">Physician's Phone Number</label>
+                        <div class="">
+                            <input class="6" id="medicinePhone" name="medicinePhone" type="text" placeholder="" class="form-control input-md">
+
+                        </div>
+                    </div>
+                    <!-- Text input-->
+                    <div class="form-group">
+                        <label class=" control-label" for="medicineTime">When to take</label>
+                        <div class="">
+                            <input class="7" id="medicineTime" name="medicineTime" type="text" placeholder="" class="form-control input-md">
+                            <small id="medicineTimeHelp" class="form-text text-muted">Enter "0900+1500+2200" for 9 a.m, 3 p.m and 8 p.m</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Button -->
+            <div class="form-group">
+                <div class="">
+                    <button id="add-more" name="add-more" class="btn btn-warning ">Add More Medicine</button>
+                </div>
+            </div>
 
 
 
             <button type="submit" class="btn btn-primary">Submit</button>
-         </form>
-        </div>
-
-
-
+        </form>
     </div>
+
+
+
+</div>
+
 
 
 
@@ -428,10 +357,11 @@
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-<script src="../static/JS/index.js"></script>
+
+</script><script src="../static/JS/index.js"></script>
 
 </body>
 </html>
