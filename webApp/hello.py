@@ -268,15 +268,13 @@ def addParent():
         password = request.form['parentPassword']
         email = request.form['parentEmail']
         phone = request.form['parentPhone']
-        house = request.form['parentHouse']
+        house = request.form['parentHouse'].split(',')
 
         db, client = connect_to_db()
 
-        db.parent.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
+        db.Parents.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
         client.close()
-        return "True"
-    return "False"
-
+ 
 @app.route('/editParent', methods = ["POST"])
 @cross_origin()
 def editParent():
@@ -338,8 +336,7 @@ def addHouse():
         print max_id
         db.Houses.insert({"name":name,"address": address,"house_id":max_id+1})
         client.close()
-        return "True"
-    return "False"
+
 
 @app.route('/displayallhouses', methods = ["GET"])
 @cross_origin()
@@ -375,7 +372,7 @@ def updateHouse():
         name = request.form['house_name']
         address = request.form['address']
         db, client = connect_to_db()
-        db.Houses.find_and_replace({"house_id":house_id},{"house_id":house_id,"name":name,"address":address})
+        db.Houses.find_one_and_replace({"house_id":house_id},{"house_id":house_id,"name":name,"address":address})
         client.close()
         return "True"
     return "False"
