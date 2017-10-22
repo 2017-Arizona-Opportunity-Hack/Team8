@@ -52,7 +52,7 @@ def login():
                 return redirect(url_for('show_user_profile', username=username))
         else:
             client.close()
-            return "No such username registered with the website"
+            return "No such admin registered with the website"
     else:
         return render_template('index.html')
 
@@ -127,7 +127,7 @@ def getAllChildren():
         house_id = int(request.form['house_id'])
         print type(house_id)
         db,client = connect_to_db()
-        all_children = db.Children.find({'house_id': house_id},{'_id':0,"child_id":1, "first_name":1, "last_name":1})
+        all_children = db.Children.find({'house_id': house_id},{'_id':0,"child_id":1, "first_name":1, "last_name":1, "toggle_inhouse":1})
         list1=[]
         for c in all_children:
             list1.append(c)
@@ -162,23 +162,87 @@ def logMedicineGiven():
         return "True"
     return "False"
 
-'''
+@app.route('/addachild', methods = ["POST"])
 def createChildren():
     if request.method == 'POST':
+        child_obj = {}
         if all(k in request.form for k in [first_name, last_name]):
-            fname = request.form['first_name']
-            lname = request.form['first_name']
+            child_obj['first_name'] = request.form['first_name']
+            child_obj['last_name'] = request.form['last_name']
             if request.form['house_id']:
-                house_id = request.form['house_id']
+                child_obj['house_id'] = request.form['house_id']
+            all_medications = []
             if request.form['medications']:
-                for medications in medications:
-                medications = request.form['house_id']
+                for medications in request.form['medications']:
+                    all_medications.append(medications)
+        child_obj['medications'] = all_medications
         db,client = connect_to_db()
-        all_children = db.children.find({'house_id': house_id})
+        db.Children.insert_one(child_obj)
         client.close()
-        return all_children
+        return "true"
     return None
-'''
+
+@app.route('/updatechild', methods = ["POST"])
+def updateChild():
+    if request.method == 'POST':
+        db, client = connect_to_db()
+        dbChildObj = db.Children.find({"first_name":request.form[first_name],"last_name": request.form['last_name']})[0]
+        for key,value in request.form:
+            if key not in dbChildObj:
+                dbChildObj[key] = value
+        if request.form['medications']:
+            for med in request.form['medications']:
+                if med in dbChildObj['medications']:
+                    dbChildObj['medications'] = med
+
+        db.Children.find_one_and_replace({"first_name":request.form['first_name'],"last_name": request.form['last_name']},dbChildObj)
+        client.close()
+        return "true"
+    return False
+
+@app.route('/deletechild', methods = ["POST"])
+def deleteChild():
+    try:
+        if request.method == 'POST':
+            db, client = connect_to_db()
+            db.Children.deleteOne({"first_name":request.form['first_name'],"last_name": request.form['last_name']})
+            return "true"
+        else:
+            return "false"
+    except:
+        pass
+
+@app.route('/displayallchildren', methods = ["GET"])
+def displayAllChildren():
+    if request.method == 'GET':
+        db,client = connect_to_db()
+        all_children = db.Children.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
+        list1=[]
+        for c in all_children:
+            house_name = db.Houses.find({"house_id"},{"_id":0,"name":1})[0]['name']
+            c['house_name'] = house_name
+            list1.append(c)
+        print list1
+        client.close()
+        return jsonify(list1)
+    return None
+
+
+@app.route('/displayallparents', methods = ["GET"])
+def displayAllParents():
+    if request.method == 'GET':
+        db,client = connect_to_db()
+        all_parents = db.Parents.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
+        list1=[]
+        for c in all_parents:
+            for hid in house_id:
+                house_name = db.Houses.find({"house_id":hid},{"_id":0,"name":1})[0]['name']
+                c['house_name'].append(house_name)
+            list1.append(c)
+        print list1
+        client.close()
+        return jsonify(list1)
+    return None
 
 
 if __name__ == '__main__':
