@@ -4,8 +4,10 @@ import datetime
 import json
 from bson import ObjectId
 from bson.json_util import dumps
+from flask_cors import CORS, cross_origin
 app = Flask(__name__)
- 
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
  
 
 def connect_to_db():
@@ -163,6 +165,7 @@ def logMedicineGiven():
     return "False"
 
 @app.route('/addachild', methods = ["POST"])
+@cross_origin()
 def createChildren():
     if request.method == 'POST':
         child_obj = {}
@@ -183,6 +186,7 @@ def createChildren():
     return None
 
 @app.route('/updatechild', methods = ["POST"])
+@cross_origin()
 def updateChild():
     if request.method == 'POST':
         db, client = connect_to_db()
@@ -201,6 +205,7 @@ def updateChild():
     return False
 
 @app.route('/deletechild', methods = ["POST"])
+@cross_origin()
 def deleteChild():
     try:
         if request.method == 'POST':
@@ -213,6 +218,7 @@ def deleteChild():
         pass
 
 @app.route('/displayallchildren', methods = ["GET"])
+@cross_origin()
 def displayAllChildren():
     if request.method == 'GET':
         db,client = connect_to_db()
@@ -229,6 +235,7 @@ def displayAllChildren():
 
 
 @app.route('/displayallparents', methods = ["GET"])
+@cross_origin()
 def displayAllParents():
     if request.method == 'GET':
         db,client = connect_to_db()
@@ -249,6 +256,7 @@ def displayAllParents():
 
 #parent crud
 @app.route('/addParent', methods = ["POST"])
+@cross_origin()
 def addParent():
     if request.method == 'POST':
         firstname = request.form['parentFirstName']
@@ -267,6 +275,7 @@ def addParent():
     return "False"
 
 @app.route('/editParent', methods = ["POST"])
+@cross_origin()
 def editParent():
     if request.method == 'POST':
         firstname = request.form['parentFirstName']
@@ -288,6 +297,7 @@ def editParent():
 
 
 @app.route('/deleteParent', methods = ["POST"])
+@cross_origin()
 def deleteParent():
     if request.method == 'POST':
         username = request.form['parentUserName']
@@ -297,6 +307,22 @@ def deleteParent():
         db.close()
         return "True"
     return "False"
+
+#mobileapp toggle
+@app.route('/togglechild', methods = ["POST"])
+def togglechild():
+    if request.method == 'POST':
+        child_id = int(request.form['child_id'])
+        db, client = connect_to_db()
+
+        toggle_child = db.Children.find({"child_id":child_id },{"_id":0,"toggle_inhouse":1})[0]
+
+        toggle_child['toggle_inhouse'] = not(toggle_child['toggle_inhouse'])
+        db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse':toggle_child['toggle_inhouse'] }})
+        client.close()
+        return "True"
+    return "False"
+
 
 
 
