@@ -24,16 +24,16 @@
             <ul class="navbar-nav mr-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">House</a>
+                    <a class="nav-link navChild" href="#">Child</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Child</a>
+                    <a class="nav-link navHouse" href="#">House</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Parent</a>
+                    <a class="nav-link navParent" href="#">Parent</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link navAbout" href="#">About</a>
                 </li>
 
             </ul>
@@ -49,9 +49,64 @@
     <!--Nav bar ends here-->
 
 
+    <!--All forms end here-->
+    <div class="parentTab center" id="parentTab">
+
+        <button id="addNewParent" type="submit" class="btn btn-primary">Add new parent</button>
+
+        <div>
+            <li>Parent 1</li>
+            <li>Parent 2</li>
+            <li>Parent 3</li>
+            <li>Parent 4</li>
+            <li>Parent 5</li>
+
+        </div>
+
+    </div>
+
+    <div class="childTab center" id="childTab">
+        <button id="addNewChild" type="submit" class="btn btn-primary">Add new Child</button>
+
+        <div>
+            <li>Child 1</li>
+            <li>Child 2</li>
+            <li>Child 3</li>
+            <li>Child 4</li>
+            <li>Child 5</li>
+
+        </div>
+
+
+    </div>
+
+    <div class="houseTab center" id="houseTab">
+        <button id="addNewHouse" type="submit" class="btn btn-primary">Add new House</button>
+
+        <div>
+            <li>house 1</li>
+            <li>house 2</li>
+            <li>house 3</li>
+            <li>house 4</li>
+            <li>house 5</li>
+
+        </div>
+
+
+    </div>
+
+    <div class="aboutTab center" id="aboutTab">
+
+        <div>
+            Somethig about
+        </div>
+
+    </div>
+
+
 
     <!--Add new house here-->
-    <div class="add-house form-general">
+    <div id="house" class="add-house form-general">
         <div class="form-title text-center">
            <h5> Add New House
            </h5>
@@ -76,7 +131,7 @@
 
 
     <!--Add new parent here-->
-    <div class="add-house form-general">
+    <div id="parent" class="add-house form-general">
         <div class="form-title text-center">
             <h5> Add New Parent
             </h5>
@@ -120,7 +175,7 @@
 
 
     <!--Add new child-->
-    <div class="add-child form-general">
+    <div id="child" class="add-child form-general">
         <div class="" >
             <div class="form-title text-center">
                 <h5> Add New Child
@@ -225,6 +280,12 @@
             <button type="submit" class="btn btn-primary">Submit</button>
          </form>
         </div>
+
+
+
+    </div>
+
+
 
 </div>
 

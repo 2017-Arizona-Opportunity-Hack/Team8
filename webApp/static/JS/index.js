@@ -1,12 +1,21 @@
 $(document).ready(function () {
     //dynamic childs
-    newchild();
-    toggleHouse();
-    toggleChild();
-    toggleParent();
-});
 
-function newchild(){
+    $('#house').hide();
+    $('#child').hide();
+    $('#parent').hide();
+    $('#parentTab').hide();
+    $('#houseTab').hide();
+    $('#aboutTab').hide();
+     toggleHouse();
+     toggleChild();
+     toggleParent();
+
+     navHouse();
+     navChild();
+     navParent();
+     navAbout();
+
     var next = 0;
     $("#add-more").click(function(e){
         e.preventDefault();
@@ -31,5 +40,82 @@ function newchild(){
         });
     });
 
+});
+
+
+function toggleHouse(){
+    $('#addNewHouse').click(function(e){
+       $('#house').show();
+       $('#child').hide();
+       $('#parent').hide();
+       $('#houseTab').hide();
+
+        // alert('show house');
+    });
+}
+function toggleChild(){
+    $('#addNewChild').click(function(e){
+        $('#child').show();
+        $('#house').hide();
+        $('#parent').hide();
+        $('#childTab').hide();
+
+        //alert('show child');
+    });
+}
+function toggleParent(){
+    $('#addNewParent').click(function(e){
+        $('#parent').show();
+        $('#house').hide();
+        $('#child').hide();
+        $('#parentTab').hide();
+        //alert('show parent');
+    });
+}
+
+function  navChild() {
+
+    $('.navChild').click(function(e){
+        $('#childTab').show();
+        $('#parentTab').hide();
+        $('#houseTab').hide();
+        $('#aboutTab').hide();
+
+    });
+
+}
+
+function  navParent() {
+    $('.navParent').click(function(e){
+        $('#childTab').hide();
+        $('#parentTab').show();
+        $('#houseTab').hide();
+        $('#aboutTab').hide();
+
+    });
+
+}
+
+function  navHouse() {
+    $('.navHouse').click(function(e){
+        $('#childTab').hide();
+        $('#parentTab').hide();
+        $('#houseTab').show();
+        $('#aboutTab').hide();
+
+
+    });
+
+}
+
+function  navAbout() {
+    $('.navAbout').click(function(e){
+        $('#childTab').hide();
+        $('#parentTab').hide();
+        $('#houseTab').hide();
+        $('#aboutTab').show();
+
+
+    });
 
 }
