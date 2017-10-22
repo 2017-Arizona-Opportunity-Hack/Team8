@@ -4,12 +4,30 @@ import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 
 export default class LoginScreen extends Component<{}> {
   state = {
-    email: "",
+    username: "",
     password: ""
   };
 
   handleSignIn(navigate) {
-    navigate("MainS");
+    let formdata = new FormData();
+    formdata.append("username", this.state.username);
+    formdata.append("password", this.state.password);
+
+    fetch("https://sunshine-acres.herokuapp.com/parentlogin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: formdata
+    })
+      .then(response => {
+        console.log(response._bodyText);
+        if (response._bodyText === "true")
+          navigate("MainS", { username: this.state.username });
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   render() {
@@ -24,10 +42,11 @@ export default class LoginScreen extends Component<{}> {
               marginBottom: 50
             }}
           />
-          <FormLabel>Email</FormLabel>
+          <FormLabel>Username</FormLabel>
           <FormInput
-            placeholder="Please enter your email address"
-            onChangeText={email => this.setState({ email })}
+            placeholder="Please enter your username"
+            onChangeText={username => this.setState({ username })}
+            autoCapitalize="none"
             value={this.state.email}
           />
           <FormLabel>Password</FormLabel>

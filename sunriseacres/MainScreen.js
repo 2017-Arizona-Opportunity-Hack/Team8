@@ -14,7 +14,7 @@ export default class MainScreen extends Component<{}> {
   componentDidMount() {
     let formdata = new FormData();
 
-    formdata.append("username", "a-nadig");
+    formdata.append("username", this.props.navigation.state.params.username);
     fetch("https://sunshine-acres.herokuapp.com/getallhouses", {
       method: "POST",
       headers: {
@@ -31,7 +31,7 @@ export default class MainScreen extends Component<{}> {
         });
       })
       .catch(error => {
-        console.error(error);
+        console.log(error);
       });
   }
   fetchChildren() {
@@ -47,7 +47,13 @@ export default class MainScreen extends Component<{}> {
       .then(response => response.json())
       .then(response => {
         console.log(response);
-        this.setState({ child: response, loading: false, showChild: true });
+        this.setState({
+          child: response,
+          loading: false,
+          showChild: true,
+          child_id: response[0].child_id,
+          child_toggle: response[0].toggle_inhouse
+        });
       })
       .catch(error => {
         console.error(error);
@@ -62,7 +68,8 @@ export default class MainScreen extends Component<{}> {
     showOptions: false,
     option1: false,
     option2: false,
-    loading: true
+    loading: true,
+    child_toggle: null
   };
   updateHouse = house => {
     this.setState({ house_id, loading: false });
@@ -87,7 +94,11 @@ export default class MainScreen extends Component<{}> {
           <Picker
             selectedValue={this.state.house_id}
             onValueChange={(itemValue, itemIndex) =>
-              this.setState({ house_id: itemValue, showChild: false })}
+              this.setState({
+                house_id: itemValue,
+                showChild: false,
+                showOptions: false
+              })}
             style={{ width: 300, height: 50 }}
             itemStyle={{ height: 50 }}
           >
@@ -104,7 +115,10 @@ export default class MainScreen extends Component<{}> {
             <Picker
               selectedValue={this.state.child_id}
               onValueChange={(itemValue, itemIndex) =>
-                this.setState({ child_id: itemValue })}
+                this.setState({
+                  child_id: itemValue,
+                  child_toggle: this.state.child[itemIndex].toggle_inhouse
+                })}
               style={{ width: 300, height: 50 }}
               itemStyle={{ height: 50 }}
             >
@@ -126,10 +140,9 @@ export default class MainScreen extends Component<{}> {
             buttonStyle={{
               marginTop: 20,
               marginRight: 20,
-              marginLeft: 20,
-              fontSize: 30
+              marginLeft: 20
             }}
-            onPress={() => navigate("List")}
+            onPress={() => navigate("List", { child_id: this.state.child_id })}
             title="Log Medicine"
           />
         )}
@@ -163,20 +176,37 @@ export default class MainScreen extends Component<{}> {
     );
   }
   showAlert() {
+    var status = "At Foster Care";
+    if (!this.state.child_toggle) status = "Home Vist";
     Alert.alert(
       "Confirm",
       "Are you sure you want to change the home visit status? Current status is - " +
-        "blah",
+        status,
       [
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "Yes", onPress: () => console.log("OK Pressed") }
+        { text: "Yes", onPress: () => this.changeToggle() }
       ],
       { cancelable: false }
     );
+  }
+  changeToggle() {
+    let formdata = new FormData();
+    formdata.append("child_id", this.state.child_id);
+    fetch("https://sunshine-acres.herokuapp.com/togglechild", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: formdata
+    })
+      .then(response => this.fetchChildren())
+      .catch(error => {
+        console.error(error);
+      });
   }
 }
 
