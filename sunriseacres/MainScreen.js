@@ -11,25 +11,77 @@ import {
 import { Button } from "react-native-elements";
 
 export default class MainScreen extends Component<{}> {
+  componentDidMount() {
+    let formdata = new FormData();
+
+    formdata.append("username", this.props.navigation.state.params.username);
+    fetch("https://sunshine-acres.herokuapp.com/getallhouses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: formdata
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          house: response,
+          loading: false,
+          house_id: response[0].house_id
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+  fetchChildren() {
+    let formdata = new FormData();
+    formdata.append("house_id", this.state.house_id);
+    fetch("https://sunshine-acres.herokuapp.com/getchildren", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: formdata
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        this.setState({
+          child: response,
+          loading: false,
+          showChild: true,
+          child_id: response[0].child_id,
+          child_toggle: response[0].toggle_inhouse
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
   state = {
-    house: "",
-    child: "",
+    house: [],
+    child: [],
+    house_id: 0,
+    child_id: 0,
     showChild: false,
     showOptions: false,
     option1: false,
     option2: false,
-    loading: true
+    loading: true,
+    child_toggle: null
   };
   updateHouse = house => {
-    this.setState({ house, loading: false });
+    this.setState({ house_id, loading: false });
   };
   updateChild = child => {
     this.setState({ child, loading: false });
   };
 
   showMore() {
-    if (!this.state.showChild) this.setState({ showChild: true });
-    else this.setState({ showOptions: true });
+    if (!this.state.showChild) {
+      this.fetchChildren();
+    } else this.setState({ showOptions: true });
   }
 
   render() {
@@ -38,31 +90,49 @@ export default class MainScreen extends Component<{}> {
     return (
       <View style={styles.container}>
         <Text style={{ margin: 10, fontSize: 25 }}>Select a House</Text>
-        <Picker
-          selectedValue={this.state.house}
-          onValueChange={this.updateHouse}
-          style={{ width: 300, height: 50 }}
-          itemStyle={{ height: 50 }}
-        >
-          <Picker.Item label="Steve" value="steve" />
-          <Picker.Item label="Ellen" value="ellen" />
-          <Picker.Item label="Maria" value="maria" />
-        </Picker>
-        {this.state.showChild && (
-          <Text style={{ margin: 10, fontSize: 25 }}>Select a Child</Text>
-        )}
-        {this.state.showChild && (
+        {this.state.house && (
           <Picker
-            selectedValue={this.state.child}
-            onValueChange={this.updateChild}
+            selectedValue={this.state.house_id}
+            onValueChange={(itemValue, itemIndex) =>
+              this.setState({
+                house_id: itemValue,
+                showChild: false,
+                showOptions: false
+              })}
             style={{ width: 300, height: 50 }}
             itemStyle={{ height: 50 }}
           >
-            <Picker.Item label="Steve2" value="steve" />
-            <Picker.Item label="Ellen1" value="ellen" />
-            <Picker.Item label="Maria1" value="maria" />
+            {this.state.house.map((l, i) => {
+              return <Picker.Item value={l.house_id} label={l.name} key={i} />;
+            })}
           </Picker>
         )}
+        {this.state.showChild && (
+          <Text style={{ margin: 10, fontSize: 25 }}>Select a Child</Text>
+        )}
+        {this.state.showChild &&
+          this.state.child && (
+            <Picker
+              selectedValue={this.state.child_id}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({
+                  child_id: itemValue,
+                  child_toggle: this.state.child[itemIndex].toggle_inhouse
+                })}
+              style={{ width: 300, height: 50 }}
+              itemStyle={{ height: 50 }}
+            >
+              {this.state.child.map((l, i) => {
+                return (
+                  <Picker.Item
+                    value={l.child_id}
+                    label={l.first_name}
+                    key={i}
+                  />
+                );
+              })}
+            </Picker>
+          )}
         {this.state.showOptions && (
           <Button
             icon={{ name: "code" }}
@@ -70,10 +140,9 @@ export default class MainScreen extends Component<{}> {
             buttonStyle={{
               marginTop: 20,
               marginRight: 20,
-              marginLeft: 20,
-              fontSize: 30
+              marginLeft: 20
             }}
-            onPress={() => navigate("List")}
+            onPress={() => navigate("List", { child_id: this.state.child_id })}
             title="Log Medicine"
           />
         )}
@@ -107,20 +176,37 @@ export default class MainScreen extends Component<{}> {
     );
   }
   showAlert() {
+    var status = "At Foster Care";
+    if (!this.state.child_toggle) status = "Home Vist";
     Alert.alert(
       "Confirm",
       "Are you sure you want to change the home visit status? Current status is - " +
-        "blah",
+        status,
       [
         {
           text: "Cancel",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "Yes", onPress: () => console.log("OK Pressed") }
+        { text: "Yes", onPress: () => this.changeToggle() }
       ],
       { cancelable: false }
     );
+  }
+  changeToggle() {
+    let formdata = new FormData();
+    formdata.append("child_id", this.state.child_id);
+    fetch("https://sunshine-acres.herokuapp.com/togglechild", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: formdata
+    })
+      .then(response => this.fetchChildren())
+      .catch(error => {
+        console.error(error);
+      });
   }
 }
 
