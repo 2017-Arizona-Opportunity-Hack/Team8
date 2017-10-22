@@ -1,22 +1,39 @@
-import React, { Component } from 'react';
-import { StyleSheet, ScrollView, Text, View } from 'react-native';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  ScrollView,
+  Text,
+  View,
+  ActivityIndicator
+} from "react-native";
 
-import MedLog from './MedLog';
+import MedLog from "./MedLog";
 
 class MedLogList extends Component {
-  // constructor() {
-  //   super();
-  // }
-  render () {
-    return (
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <MedLog />
-        <MedLog />
-        <MedLog />
-        <MedLog />
-        <MedLog />
-      </ScrollView>
-    )
+  state = {
+    loading: true
+  };
+  render() {
+    if (this.state.loading) {
+      return (
+        <ActivityIndicator
+          animating={this.state.loading}
+          color="#03A9F4"
+          size="large"
+          style={{ marginTop: 40 }}
+        />
+      );
+    } else {
+      return (
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          <MedLog />
+          <MedLog />
+          <MedLog />
+          <MedLog />
+          <MedLog />
+        </ScrollView>
+      );
+    }
   }
 }
 

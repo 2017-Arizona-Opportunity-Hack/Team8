@@ -3,26 +3,40 @@ import { Platform, StyleSheet, Text, View, Image } from "react-native";
 import { Card, Button, FormLabel, FormInput } from "react-native-elements";
 
 export default class LoginScreen extends Component<{}> {
-  handleSignIn() {
-    console.log('handleLogin');
+  state = {
+    email: "",
+    password: ""
+  };
+
+  handleSignIn(navigate) {
+    navigate("MainS");
   }
 
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={{ paddingVertical: 50 }}>
-        <Card
-          containerStyle={{ borderRadius: 10 }}>
+        <Card containerStyle={{ borderRadius: 10 }}>
           <Image
-            source={require('./images/logo.png')}
+            source={require("./images/logo.png")}
             style={{
               marginTop: 50,
-              marginBottom: 50}}
+              marginBottom: 50
+            }}
           />
           <FormLabel>Email</FormLabel>
-          <FormInput placeholder="Please enter your email address" />
+          <FormInput
+            placeholder="Please enter your email address"
+            onChangeText={email => this.setState({ email })}
+            value={this.state.email}
+          />
           <FormLabel>Password</FormLabel>
-          <FormInput secureTextEntry placeholder="Please enter your password" />
+          <FormInput
+            secureTextEntry
+            placeholder="Please enter your password"
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
+          />
 
           <Button
             buttonStyle={{
@@ -31,9 +45,7 @@ export default class LoginScreen extends Component<{}> {
             }}
             backgroundColor="#03A9F4"
             title="SIGN IN"
-            onPress={() => {
-              navigate("MainS");
-            }}
+            onPress={() => this.handleSignIn(navigate)}
           />
         </Card>
       </View>

@@ -32,9 +32,9 @@ class HomeScreen extends Component {
 }
 
 const Stack = StackNavigator({
-  Home: { screen: HomeScreen },
+  Login: { screen: LoginScreen },
   MainS: { screen: MainScreen },
-  Login: { screen: LoginScreen }
+  List: { screen: MedLogList }
 });
 
 const instructions = "Sunshine Acres";

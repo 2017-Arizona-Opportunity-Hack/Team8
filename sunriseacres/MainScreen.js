@@ -1,8 +1,15 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View, Picker, Alert } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Picker,
+  Alert,
+  ActivityIndicator
+} from "react-native";
 import { Button } from "react-native-elements";
-var op1 = false;
-var op2 = false;
+
 export default class MainScreen extends Component<{}> {
   state = {
     house: "",
@@ -10,13 +17,14 @@ export default class MainScreen extends Component<{}> {
     showChild: false,
     showOptions: false,
     option1: false,
-    option2: false
+    option2: false,
+    loading: true
   };
   updateHouse = house => {
-    this.setState({ house });
+    this.setState({ house, loading: false });
   };
   updateChild = child => {
-    this.setState({ child });
+    this.setState({ child, loading: false });
   };
 
   showMore() {
@@ -25,28 +33,30 @@ export default class MainScreen extends Component<{}> {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
+
     return (
       <View style={styles.container}>
-        <Text>Select a House</Text>
+        <Text style={{ margin: 10, fontSize: 25 }}>Select a House</Text>
         <Picker
           selectedValue={this.state.house}
           onValueChange={this.updateHouse}
-          style={{ width: 200, height: 44 }}
-          itemStyle={{ height: 44 }}
+          style={{ width: 300, height: 50 }}
+          itemStyle={{ height: 50 }}
         >
           <Picker.Item label="Steve" value="steve" />
           <Picker.Item label="Ellen" value="ellen" />
           <Picker.Item label="Maria" value="maria" />
         </Picker>
         {this.state.showChild && (
-          <Text style={{ margin: 20 }}>Select a Child</Text>
+          <Text style={{ margin: 10, fontSize: 25 }}>Select a Child</Text>
         )}
         {this.state.showChild && (
           <Picker
             selectedValue={this.state.child}
             onValueChange={this.updateChild}
-            style={{ width: 200, height: 44, margin: 10 }}
-            itemStyle={{ height: 44 }}
+            style={{ width: 300, height: 50 }}
+            itemStyle={{ height: 50 }}
           >
             <Picker.Item label="Steve2" value="steve" />
             <Picker.Item label="Ellen1" value="ellen" />
@@ -58,11 +68,12 @@ export default class MainScreen extends Component<{}> {
             icon={{ name: "code" }}
             backgroundColor="#03A9F4"
             buttonStyle={{
-              borderRadius: 0,
-              marginLeft: 0,
-              marginRight: 0,
-              marginBottom: 0
+              marginTop: 20,
+              marginRight: 20,
+              marginLeft: 20,
+              fontSize: 30
             }}
+            onPress={() => navigate("List")}
             title="Log Medicine"
           />
         )}
@@ -71,19 +82,27 @@ export default class MainScreen extends Component<{}> {
             icon={{ name: "code" }}
             backgroundColor="#03A9F4"
             buttonStyle={{
-              borderRadius: 0,
-              marginLeft: 0,
-              marginRight: 0,
-              marginBottom: 0
+              margin: 20
             }}
             onPress={() => this.showAlert()}
             title="Record Home Visit"
           />
         )}
 
-        {!this.state.showOptions && (
-          <Button onPress={() => this.showMore()} title="Next" />
-        )}
+        {!this.state.showOptions &&
+          !this.state.loading && (
+            <Button
+              buttonStyle={{ marginTop: 30 }}
+              onPress={() => this.showMore()}
+              title="Next"
+            />
+          )}
+        <ActivityIndicator
+          animating={this.state.loading}
+          color="#03A9F4"
+          size="large"
+          style={{ marginTop: 40 }}
+        />
       </View>
     );
   }
@@ -109,7 +128,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: "#ffffff"
   },
   welcome: {
     fontSize: 20,
