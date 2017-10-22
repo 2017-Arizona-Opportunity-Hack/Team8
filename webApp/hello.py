@@ -75,11 +75,13 @@ def parentlogin():
                 db.Parents.find_one_and_update({'username': username},{'$set':{'logged_in': True}})
                 client.close()
                 return "true"
+            else:
+                return "false"
         else:
             client.close()
-            return "No such House Parent registered with the website"
+            return "false"
     else:
-        return "Only POST request allowed"
+        return "false"
 
 		
 @app.route('/logout', methods = ["POST"])
@@ -323,8 +325,33 @@ def togglechild():
         return "True"
     return "False"
 
+@app.route('/addHouse', methods = ["POST"])
+@cross_origin()
+def addHouse():
+    if request.method == 'POST':
+        name = request.form['house_name']
+        address = request.form['address']
+        db, client = connect_to_db()
+        max_id = db.Houses.find().sort([('house_id', -1)]).limit(1)[0]["house_id"]
+        print max_id
+        db.Houses.insert({"name":name,"address": address,"house_id":max_id+1})
+        client.close()
+        return "True"
+    return "False"
 
-
+@app.route('/displayallhouses', methods = ["GET"])
+@cross_origin()
+def displayallHouses():
+    if request.method == 'GET':
+        db, client = connect_to_db()
+        houses = db.Houses.find({},{'house_id':1,"name":1, "_id":0})
+        list1 = []
+        for c in houses:
+            list1.append(c)
+        print list1
+        client.close()
+        return jsonify(list1)
+    return None
 
 if __name__ == '__main__':
     app.run(debug=True)
