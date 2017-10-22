@@ -34,7 +34,7 @@ def createMedSchedule():
                 schedule_row_object['done'] = "N/A"
             else:
                 schedule_row_object['done'] = False
-            db.MedicineSchedule.find_one_and_replace({"AdministrationTime":schedule_row_object["AdministrationTime"]},
+            db.MedicineSchedule.find_one_and_replace({"child_id":schedule_row_object['child_id'],"AdministrationTime":schedule_row_object["AdministrationTime"]},
                                                      schedule_row_object, upsert=True)
     client.close()
 
