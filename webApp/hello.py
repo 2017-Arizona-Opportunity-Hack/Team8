@@ -244,6 +244,58 @@ def displayAllParents():
         return jsonify(list1)
     return None
 
+#parent crud
+@app.route('/addParent', method = ["POST"])
+def addParent():
+	if request.method == 'POST':
+		firstname = request.form['parentFirstName']
+		lastname = request.form['parentLastName']
+		username = request.form['parentUsername']
+		password = request.form['parentPassword']
+		email = request.form['parentEmail']
+		phone = request.form['parentPhone']
+		house = request.form['parentHouse']
+
+		db, client = connect_to_db()
+
+		db.parent.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
+		client.close()
+		return "True"
+	return "False"
+
+@app.route('/editParent', method = ["POST"])
+def editParent():
+	if request.method == 'POST':
+		firstname = request.form['parentFirstName']
+		lastname = request.form['parentLastName']
+		username = request.form['parentUsername']
+		password = request.form['parentPassword']
+		email = request.form['parentEmail']
+		phone = request.form['parentPhone']
+		house = request.form['parentHouse']
+		db, client = connect_to_db()
+
+		db.parent.remove({"username":username})
+		db.parent.insert(
+			{"first_name": firstname, "last_name": lastname, "username": username, "password": password, "email": email,
+			 "house_id": house, "phone": phone})
+		client.close()
+		return "True"
+	return "False"
+
+
+@app.route('/deleteParent', method = ["POST"])
+def editParent():
+	if request.method == 'POST':
+		username = request.form['parentUserName']
+		db, client = connect_to_db()
+
+		db.parent.remove({"username": username})
+		db.close()
+		return "True"
+	return "False"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
