@@ -72,7 +72,7 @@ def parentlogin():
                 db.Parents.update_many({},{'$set':{'logged_in': False}})
                 db.Parents.find_one_and_update({'username': username},{'$push':{'timestamp': timestamp}, '$set':{'logged_in': True}})
                 client.close()
-                return redirect(url_for('show_user_profile', username=username))
+                return "true"
         else:
             client.close()
             return "No such House Parent registered with the website"
@@ -237,7 +237,10 @@ def displayAllParents():
         for c in all_parents:
             for hid in c['house_id']:
                 house_name = db.Houses.find({"house_id":hid},{"_id":0,"name":1})[0]['name']
-                c['house_name'].append(house_name)
+                if 'house_name' in c:
+                    c['house_name'].append(house_name)
+                else:
+                    c['house_name']=[house_name]
             list1.append(c)
         print list1
         client.close()
