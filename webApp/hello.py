@@ -112,10 +112,9 @@ def getAllHouses():
         db,client = connect_to_db()
         house_ids = db.Parents.find({"username":username},{'_id':0,'house_id':1})
         all_houses = []
-        for dict in house_ids:
-            k,house_id=dict.items()[0]
-
-            all_houses.extend(db.Houses.find({'house_id': house_id},{'_id':0,'name':1, 'house_id':1}))
+        house_ids = house_ids[0]['house_id']
+        for hid in house_ids:
+            all_houses.extend(db.Houses.find({'house_id': hid},{'_id':0,'name':1, 'house_id':1}))
         client.close()
         print all_houses
         return jsonify(all_houses)
