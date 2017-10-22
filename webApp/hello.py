@@ -412,6 +412,7 @@ def getMedSchedule():
                         "Dosage",
                         "Date Given",
                         "Time Given",
+                        "House Visit"
                         ]
             writer.writerow(headings)
 
@@ -425,7 +426,8 @@ def getMedSchedule():
                 Dosage = dict["Dosage"]
                 dategiven = str(dict["AdministrationTime"].date())
                 timegiven = str(dict["AdministrationTime"].time())
-                writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven])
+                house_visit = not(dict["toggle_inhouse"])
+                writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven, house_visit])
 
         return "true"
 
