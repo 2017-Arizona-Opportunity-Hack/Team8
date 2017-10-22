@@ -180,9 +180,16 @@ def createChildren():
             all_medications = []
             if request.form['medications']:
                 for medications in request.form['medications']:
+                    dd = {}
+                    for dicts in medications["dosage_time"]:
+                        for kk,vv in dicts.items():
+                            dd[kk] = vv
+                    medications["dosage_time"] = dd
                     all_medications.append(medications)
         child_obj['medications'] = all_medications
         db,client = connect_to_db()
+        max_id = db.Children.find().sort([('child_id', -1)]).limit(1)[0]["child_id"]
+        child_obj["child_id"] = max_id
         db.Children.insert_one(child_obj)
         client.close()
         return "true"
@@ -269,12 +276,15 @@ def addParent():
         email = request.form['parentEmail']
         phone = request.form['parentPhone']
         house = request.form['parentHouse'].split(',')
+        house = list(map(lambda x: int(x),house))
 
         db, client = connect_to_db()
 
         db.Parents.insert({"first_name":firstname,"last_name": lastname,"username": username,"password": password,"email": email,"house_id": house,"phone": phone})
         client.close()
- 
+        return "true"
+    return "false"
+
 @app.route('/editParent', methods = ["POST"])
 @cross_origin()
 def editParent():
@@ -377,7 +387,47 @@ def updateHouse():
         return "True"
     return "False"
 
+@app.route('/getSchedule', methods = ["POST"])
+@cross_origin()
+def getMedSchedule():
+    if request.method == 'POST':
+        start_date = datetime.datetime(2017, 6, 9, 11, 13, 3, 57000)
+        end_date = datetime.datetime.now()
+        db, client = connect_to_db()
+        medschedule = db.MedicineSchedule.find({'AdministrationTime':{'$gte': start_date, '$lte':end_date}},{"_id":0})
+        list1 = []
+        for i in medschedule:
+            print i
+            list1.append(i)
+        client.close()
+        import csv
+        with open('some.csv', 'wb') as f:
+            writer = csv.writer(f)
+            headings = ['Child Name',
+                        "Physician Name",
+                        "Physician Contact No",
+                        "Medicine Name",
+                        "Reason for medicine",
+                        "Prescribed date",
+                        "Dosage",
+                        "Date Given",
+                        "Time Given",
+                        ]
+            writer.writerow(headings)
 
+            for dict in list1:
+                name = dict['first_name']+" "+dict["last_name"]
+                physician = dict["physician"]
+                physician_phone_no = dict["physician_phone_no"]
+                med_name = dict["med_name"]
+                reason = dict["reason"]
+                prescribed_date = dict["prescribed_date"]
+                Dosage = dict["Dosage"]
+                dategiven = str(dict["AdministrationTime"].date())
+                timegiven = str(dict["AdministrationTime"].time())
+                writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven])
+
+        return "true"
 
 if __name__ == '__main__':
     app.run(debug=True)
