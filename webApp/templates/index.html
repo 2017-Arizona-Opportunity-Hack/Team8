@@ -111,16 +111,16 @@
            <h5> Add New House
            </h5>
         </div>
-        <form>
+        <form name="houseForm" onsubmit="return validateHouse()">
             <div class="form-group">
                 <label for="houseName">House Name</label>
-                <input id="houseName" class="form-control" type="text" placeholder="enter house name...">
+                <input id="houseName" class="form-control" type="text" placeholder="...">
 
             </div>
 
             <div class="form-group">
                 <label for="houseNumber">Number</label>
-                <input id="houseNumber" class="form-control" type="text" placeholder="enter house number...">
+                <input id="houseNumber" class="form-control" type="text" placeholder="...">
 
             </div>
 
@@ -136,16 +136,16 @@
             <h5> Add New Parent
             </h5>
         </div>
-        <form>
+        <form name="parentForm" onsubmit="return validateParent()">
             <div class="form-group">
                 <label for="parentFirstName">First Name</label>
-                <input id="parentFirstName" class="form-control" type="text" placeholder="Enter first name...">
+                <input id="parentFirstName" class="form-control" type="text" placeholder="...">
 
             </div>
 
             <div class="form-group">
-                <label for="parentSecondName">Last Name</label>
-                <input id="parentSecondName" class="form-control" type="text" placeholder="Enter last name...">
+                <label for="parentLastName">Last Name</label>
+                <input id="parentLastName" class="form-control" type="text" placeholder="...">
 
             </div>
 
@@ -181,7 +181,7 @@
                 <h5> Add New Child
                 </h5>
             </div>
-                <form><div class="form-group">
+                <form name="childForm" onsubmit="return validateChild()"><div class="form-group">
                     <label for="childFirstName">First Name</label>
                     <input id="childFirstName" class="form-control" type="text" placeholder="Enter First name...">
 

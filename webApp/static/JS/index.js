@@ -76,10 +76,15 @@ function toggleParent(){
 function  navChild() {
 
     $('.navChild').click(function(e){
+
         $('#childTab').show();
         $('#parentTab').hide();
         $('#houseTab').hide();
         $('#aboutTab').hide();
+
+        $('#parent').hide();
+        $('#house').hide();
+        $('#child').hide();
 
     });
 
@@ -92,6 +97,11 @@ function  navParent() {
         $('#houseTab').hide();
         $('#aboutTab').hide();
 
+        $('#parent').hide();
+        $('#house').hide();
+        $('#child').hide();
+
+
     });
 
 }
@@ -102,6 +112,11 @@ function  navHouse() {
         $('#parentTab').hide();
         $('#houseTab').show();
         $('#aboutTab').hide();
+
+        $('#parent').hide();
+        $('#house').hide();
+        $('#child').hide();
+
 
 
     });
@@ -115,7 +130,87 @@ function  navAbout() {
         $('#houseTab').hide();
         $('#aboutTab').show();
 
+        $('#parent').hide();
+        $('#house').hide();
+        $('#child').hide();
+
+
 
     });
+
+}
+
+function  validateHouse() {
+    $('#houseNumberWarning').remove();
+    $('#houseNameWarning').remove();
+    var nameFlag = 1;
+    var numberFlag = 1;
+    var name = document.forms["houseForm"]["houseName"].value;
+    var number = document.forms["houseForm"]["houseNumber"].value;
+    if (name == "") {
+        $('#houseName').after('<small id="houseNameWarning" class="form-text warning">Should not be empty</small>');
+        nameFlag=0;
+    }
+    if (number == "") {
+        $('#houseNumber').after('<small id="houseNumberWarning" class="form-text warning">Should not be empty</small>');
+        numberFlag=0;
+    }
+
+    if(numberFlag==0 | nameFlag==0){
+        return false;
+    }
+
+}
+
+function  validateParent() {
+    alert('parent');
+    $('#parentFNameWarning').remove();
+    $('#parentLNameWarning').remove();
+    $('#parentEmailWarning').remove();
+    $('#parentPhoneWarning').remove();
+    $('#parentHouseWarning').remove();
+
+    var fnameFlag = 1;
+    var lnameFlag = 1;
+    var phoneFlag = 1;
+    var emailFlag = 1;
+    var houseFlag = 1;
+
+    var firstname = document.forms["parentForm"]["parentFirstName"].value;
+    var lastname = document.forms["parentForm"]["parentLastName"].value;
+    var email = document.forms["parentForm"]["parentEmail"].value;
+    var phone = document.forms["parentForm"]["parentPhone"].value;
+    var house = document.forms["parentForm"]["parentHouseName"].value;
+
+
+    if (firstname == "") {
+        $('#parentFirstName').after('<small id="parentFNameWarning" class="form-text warning">Should not be empty</small>');
+        fnameFlag=0;
+    }
+
+    if (lastname == "") {
+        $('#parentLastName').after('<small id="parentLNameWarning" class="form-text warning">Should not be empty</small>');
+        lnameFlag=0;
+    }
+
+    if (email == "") {
+        $('#parentEmail').after('<small id="parentEmailWarning" class="form-text warning">Should not be empty</small>');
+        emailFlag=0;
+    }
+
+    if (phone == "") {
+        $('#parentPhone').after('<small id="parentPhoneWarning" class="form-text warning">Should not be empty</small>');
+        phoneFlag=0;
+    }
+
+    if (house == "") {
+        $('#parentHouseName').after('<small id="parentHouseWarning" class="form-text warning">Should not be empty</small>');
+        houseFlag=0;
+    }
+
+
+    if(fnameFlag==0 | lnameFlag==0 | emailFlag==0 | phoneFlag==0 | houseFlag==0){
+        return false;
+    }
 
 }
