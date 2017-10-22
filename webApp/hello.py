@@ -355,5 +355,32 @@ def displayallHouses():
         return jsonify(list1)
     return None
 
+@app.route('/deletehouse', methods = ["POST"])
+@cross_origin()
+def deleteHouse():
+    if request.method == 'POST':
+        name = request.form['house_name']
+        db, client = connect_to_db()
+        db.Houses.deleteOne({"name": name})
+        client.close()
+        return "True"
+    return "False"
+
+
+@app.route('/updatehouse', methods = ["POST"])
+@cross_origin()
+def updateHouse():
+    if request.method == 'POST':
+        house_id = request.form['house_id']
+        name = request.form['house_name']
+        address = request.form['address']
+        db, client = connect_to_db()
+        db.Houses.find_and_replace({"house_id":house_id},{"house_id":house_id,"name":name,"address":address})
+        client.close()
+        return "True"
+    return "False"
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
