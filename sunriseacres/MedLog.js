@@ -25,7 +25,7 @@ class MedLog extends Component {
             {this.props.special_instructions}
           </Text>
           <Button
-            icon={{ name: "code" }}
+            icon={{ name: "check" }}
             backgroundColor="#03A9F4"
             buttonStyle={{
               borderRadius: 0,

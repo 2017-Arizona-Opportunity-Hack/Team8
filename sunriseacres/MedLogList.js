@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Platform,
   StyleSheet,
   ScrollView,
   ListView,
@@ -7,6 +8,7 @@ import {
   View,
   ActivityIndicator
 } from "react-native";
+import { Header, Icon } from "react-native-elements";
 
 import MedLog from "./MedLog";
 
@@ -14,11 +16,17 @@ class MedLogList extends Component {
   state = {
     loading: true,
     child_id: null,
+    child_name: null,
     dataSource: null,
     med_details: []
   };
   componentDidMount() {
-    this.setState({ child_id: this.props.navigation.state.params.child_id });
+    this.setState({
+      child_id: this.props.navigation.state.params.child_id,
+      child_name: this.props.navigation.state.params.child_name
+    });
+
+    // console.log('in MedLogList, state', this.state);
 
     let formdata = new FormData();
 
@@ -40,6 +48,7 @@ class MedLogList extends Component {
   }
   generateListItems(arr) {
     meds = [];
+    console.log("arr", arr);
     for (i = 0; i < arr.length; i++) {
       med = {
         med_name: arr[i].med_name,
@@ -66,13 +75,18 @@ class MedLogList extends Component {
         />
       );
     } else {
-      console.log(this.state.med_details);
+      console.log("med_details", this.state.med_details);
       return (
-        <ListView
-          style={styles.contentContainer}
-          dataSource={ds.cloneWithRows(this.state.med_details)}
-          renderRow={data => <MedLog {...data} />}
-        />
+        <View>
+          <View style={styles.headerContainer}>
+            <Text style={styles.heading}>{this.state.child_name}</Text>
+          </View>
+          <ListView
+            style={styles.contentContainer}
+            dataSource={ds.cloneWithRows(this.state.med_details)}
+            renderRow={data => <MedLog {...data} />}
+          />
+        </View>
       );
     }
   }
@@ -82,6 +96,18 @@ export default MedLogList;
 
 const styles = StyleSheet.create({
   contentContainer: {
-    paddingVertical: 20
+    paddingVertical: 20,
+    height: Platform.OS === "ios" ? 500 : 400
+  },
+  headerContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#9809F7"
+  },
+  heading: {
+    color: "white",
+    marginTop: 10,
+    fontSize: 22
   }
 });

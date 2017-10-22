@@ -33,13 +33,13 @@ export default class LoginScreen extends Component<{}> {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View style={{ paddingVertical: 50 }}>
+      <View style={{ paddingVertical: 10 }}>
         <Card containerStyle={{ borderRadius: 10 }}>
           <Image
             source={require("./images/logo.png")}
             style={{
-              marginTop: 50,
-              marginBottom: 50
+              marginTop: 30,
+              marginBottom: 30
             }}
           />
           <FormLabel>Username</FormLabel>
