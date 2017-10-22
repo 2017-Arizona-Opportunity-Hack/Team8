@@ -22,6 +22,10 @@ class HomeScreen extends Component {
           onPress={() => navigate("Login")}
           title="link for creating login screen"
         />
+        <Button
+          onPress={() => navigate("MainS")}
+          title="link for creating Welcome Screen"
+        />
       </View>
     );
   }
