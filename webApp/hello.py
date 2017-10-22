@@ -68,9 +68,9 @@ def parentlogin():
             if dict['password'] == password:
                 #session['username'] = request.form['username']
                 update_dict = {}
-                timestamp= datetime.datetime.now()
+                #timestamp= datetime.datetime.now()
                 db.Parents.update_many({},{'$set':{'logged_in': False}})
-                db.Parents.find_one_and_update({'username': username},{'$push':{'timestamp': timestamp}, '$set':{'logged_in': True}})
+                db.Parents.find_one_and_update({'username': username},{'$set':{'logged_in': True}})
                 client.close()
                 return "true"
         else:
@@ -268,35 +268,35 @@ def addParent():
 
 @app.route('/editParent', methods = ["POST"])
 def editParent():
-	if request.method == 'POST':
-		firstname = request.form['parentFirstName']
-		lastname = request.form['parentLastName']
-		username = request.form['parentUsername']
-		password = request.form['parentPassword']
-		email = request.form['parentEmail']
-		phone = request.form['parentPhone']
-		house = request.form['parentHouse']
-		db, client = connect_to_db()
+    if request.method == 'POST':
+        firstname = request.form['parentFirstName']
+        lastname = request.form['parentLastName']
+        username = request.form['parentUsername']
+        password = request.form['parentPassword']
+        email = request.form['parentEmail']
+        phone = request.form['parentPhone']
+        house = request.form['parentHouse']
+        db, client = connect_to_db()
 
-		db.parent.remove({"username":username})
-		db.parent.insert(
-			{"first_name": firstname, "last_name": lastname, "username": username, "password": password, "email": email,
-			 "house_id": house, "phone": phone})
-		client.close()
-		return "True"
-	return "False"
+        db.parent.remove({"username":username})
+        db.parent.insert(
+            {"first_name": firstname, "last_name": lastname, "username": username, "password": password, "email": email,
+             "house_id": house, "phone": phone})
+        client.close()
+        return "True"
+    return "False"
 
 
 @app.route('/deleteParent', methods = ["POST"])
 def deleteParent():
-	if request.method == 'POST':
-		username = request.form['parentUserName']
-		db, client = connect_to_db()
+    if request.method == 'POST':
+        username = request.form['parentUserName']
+        db, client = connect_to_db()
 
-		db.parent.remove({"username": username})
-		db.close()
-		return "True"
-	return "False"
+        db.parent.remove({"username": username})
+        db.close()
+        return "True"
+    return "False"
 
 
 
