@@ -346,6 +346,8 @@ def addHouse():
         print max_id
         db.Houses.insert({"name":name,"address": address,"house_id":max_id+1})
         client.close()
+        return "True"
+    return "None"
 
 
 @app.route('/displayallhouses', methods = ["GET"])
