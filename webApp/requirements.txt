@@ -1,0 +1,6 @@
+Flask
+gunicorn
+pymongo
+dateparser
+datetime
+
