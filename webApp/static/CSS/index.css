@@ -5,13 +5,6 @@
     margin-bottom: 50px;
 }
 
-.form-title{
-
-}
-
-.add-child{
-
-}
 
 .add-medicine{
     margin-top: 50px;
@@ -46,6 +39,24 @@
     padding-top: 5px;
 }
 
-ul{
 
+a{
+   font-weight: bold;
+}
+
+.navbar{
+    border-style: solid;
+    border-color: black;
+    margin-top: -5px;
+    margin-left: -5px;
+    margin-right: -5px;
+}
+
+.log-out{
+ margin-top: 10px;
+}
+
+.btn-info{
+    background-color: #E98735;
+    border-color: #E98735;
 }
