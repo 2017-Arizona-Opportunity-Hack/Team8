@@ -171,6 +171,7 @@ def logMedicineGiven():
 @cross_origin()
 def createChildren():
     if request.method == 'POST':
+        print request.data
         child_obj = {}
         if all(k in request.form for k in ['first_name', 'last_name']):
             child_obj['first_name'] = request.form['first_name']
@@ -179,11 +180,15 @@ def createChildren():
                 child_obj['house_id'] = request.form['house_id']
             all_medications = []
             if 'medications' in request.form:
+                print "IN here"
+                print request.form["medications"]
                 for medications in request.form['medications']:
                     dd = {}
+                    print "got till 185"
                     for dicts in medications["dosage_time"]:
                         for kk,vv in dicts.items():
                             dd[kk] = vv
+                            print "got till 188"
                     medications["dosage_time"] = dd
                     all_medications.append(medications)
         child_obj['medications'] = all_medications
