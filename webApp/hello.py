@@ -175,10 +175,10 @@ def createChildren():
         if all(k in request.form for k in ['first_name', 'last_name']):
             child_obj['first_name'] = request.form['first_name']
             child_obj['last_name'] = request.form['last_name']
-            if request.form['house_id']:
+            if 'house_id' in request.form:
                 child_obj['house_id'] = request.form['house_id']
             all_medications = []
-            if request.form['medications']:
+            if 'medications' in request.form:
                 for medications in request.form['medications']:
                     dd = {}
                     for dicts in medications["dosage_time"]:
@@ -193,7 +193,7 @@ def createChildren():
         db.Children.insert_one(child_obj)
         client.close()
         return "true"
-    return None
+    return "false"
 
 @app.route('/updatechild', methods = ["POST"])
 @cross_origin()
