@@ -126,20 +126,20 @@ def parentlogout():
 #     return None
 
 #mobileapp api
-@app.route('/getchildren', methods = ["POST"])
-def getAllChildren():
-    if request.method == 'POST':
-        house_id = int(request.form['house_id'])
-        print type(house_id)
-        db,client = connect_to_db()
-        all_children = db.Children.find({'house_id': house_id},{'_id':0,"child_id":1, "first_name":1, "last_name":1, "toggle_inhouse":1})
-        list1=[]
-        for c in all_children:
-            list1.append(c)
-        print list1
-        client.close()
-        return jsonify(list1)
-    return None
+# @app.route('/getchildren', methods = ["POST"])
+# def getAllChildren():
+#     if request.method == 'POST':
+#         house_id = int(request.form['house_id'])
+#         print type(house_id)
+#         db,client = connect_to_db()
+#         all_children = db.Children.find({'house_id': house_id},{'_id':0,"child_id":1, "first_name":1, "last_name":1, "toggle_inhouse":1})
+#         list1=[]
+#         for c in all_children:
+#             list1.append(c)
+#         print list1
+#         client.close()
+#         return jsonify(list1)
+#     return None
 
 @app.route('/getMedicationDetails', methods = ["POST"])
 def getMedicationDetails():
@@ -260,25 +260,58 @@ def deleteChild():
     except:
         pass
 
-@app.route('/displayAllChildren', methods = ["GET"])
+@app.route('/getAllChildren', methods = ["GET"])
 @cross_origin()
-def displayAllChildren():
+def getAllChildren():
+    db, client = connect_to_db()
     try:
-        db,client = connect_to_db()
-        all_children = db.Children.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
-        list1=[]
-        for c in all_children:
-            house_name = db.Houses.find({"house_id":c["house_id"]},{"_id":0,"name":1})[0]['name']
-            c['house_name'] = house_name
-            list1.append(c)
-        print list1
+        children = db.Children.find()
+        all_children = []
+        for child in children:
+            child_object={
+            "_id":str(child['_id']),
+            "firstname":child['first_name'],
+            "lastname":child['last_name'],
+            "age":child['age'],
+            "house_id":child['house_id']
+            }
+
+            all_children.append(child_object)
+
         client.close()
-        return jsonify(list1)
+        return jsonify({'all_children':all_children,'success':1,'errorMessage':''})
     except Exception as e:
         print e
 
     client.close()
-    return jsonify({'success':0,'errorMessage':'error'})
+    return jsonify({"success":0,"errorMessage":"error"})
+
+@app.route('/getAllChildrenForHouse', methods = ["POST"])
+@cross_origin()
+def getAllChildrenForHouse():
+    db, client = connect_to_db()
+    try:
+        house_id = request.form['house_id']
+        children = db.Children.find({'house_id':house_id})
+        all_children = []
+        for child in children:
+            child_object={
+            "_id":str(child['_id']),
+            "firstname":child['first_name'],
+            "lastname":child['last_name'],
+            "age":child['age'],
+            "house_id":child['house_id']
+            }
+
+            all_children.append(child_object)
+
+        client.close()
+        return jsonify({'all_children':all_children,'success':1,'errorMessage':''})
+    except Exception as e:
+        print e
+
+    client.close()
+    return jsonify({"success":0,"errorMessage":"error"})
 
 @app.route('/addMedicine',methods=["POST"])
 @cross_origin()
@@ -434,22 +467,30 @@ def deleteSpecialMedicine():
 @app.route('/getAllParents', methods = ["GET"])
 @cross_origin()
 def displayAllParents():
-    if request.method == 'GET':
-        db,client = connect_to_db()
-        all_parents = db.Parents.find({},{'_id':0,"first_name":1, "last_name":1, "house_id":1})
-        list1=[]
-        for c in all_parents:
-            for hid in c['house_id']:
-                house_name = db.Houses.find({"house_id":hid},{"_id":0,"name":1})[0]['name']
-                if 'house_name' in c:
-                    c['house_name'].append(house_name)
-                else:
-                    c['house_name']=[house_name]
-            list1.append(c)
-        print list1
+    db, client = connect_to_db()
+    try:
+        parents = db.Parents.find()
+        all_parents = []
+        for parent in parents:
+            parent_object={
+            "_id":str(parent['_id']),
+            "firstname":parent['first_name'],
+            "lastname":parent['last_name'],
+            "phone":parent['phone'],
+            "email":parent['email'],
+            'password':str(parent['password']),
+            "house_id":parent['house_id']
+            }
+
+            all_parents.append(parent_object)
+
         client.close()
-        return jsonify(list1)
-    return None
+        return jsonify({'all_parents':all_parents,'success':1,'errorMessage':''})
+    except Exception as e:
+        print e
+
+    client.close()
+    return jsonify({"success":0,"errorMessage":"error"})
 
 #parent crud
 @app.route('/addParent', methods = ["POST"])
@@ -466,7 +507,7 @@ def addParent():
 
         parent = db.Parents.find_one({"email":email})
         if not parent:
-            _id = db.Parents.insert({"first_name":firstname,"last_name": lastname,"password": password,"email": email,"house_id": houses,"phone": phone})
+            _id = db.Parents.insert({"first_name":firstname,"last_name": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone})
             client.close()
             return jsonify({'success':1,'errorMessage':'','_id':str(_id)})
 
@@ -491,7 +532,7 @@ def editParent():
         email = request.form['email']
         phone = request.form['phone']
         houses = request.form['houses'].split(",")
-        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"first_name":firstname,"last_name": lastname,"password": password,"email": email,"house_id": houses,"phone": phone}}, upsert=False)
+        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"first_name":firstname,"last_name": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone}}, upsert=False)
         client.close()
         return jsonify({'success':1,'errorMessage':''})
     except Exception as e:
@@ -515,6 +556,35 @@ def deleteParent():
 
     client.close()
     return jsonify({'success':0,'errorMessage':'error'})
+
+
+@app.route('/getAllHousesForParent', methods = ["POST"])
+@cross_origin()
+def getAllHousesForParent():
+    db, client = connect_to_db()
+    try:
+        _id = request.form['_id']
+        parent = db.Parents.find_one({'_id':ObjectId(_id)})
+        parent_houses_id = parent['house_id']   
+        all_houses = [] 
+        for i in range(len(parent_houses_id)):
+            house = db.Houses.find_one({'_id':ObjectId(parent_houses_id[i])})
+            house_object={
+            "house_id":house['house_id'],
+            "name":house['name'],
+            "address":house['address'],
+            "_id":str(house['_id'])
+            }
+            all_houses.append(house_object)
+        client.close()
+        return jsonify({'all_houses':all_houses,'success':1,'errorMessage':''})
+    except Exception as e:
+        print e
+
+    client.close()
+    return jsonify({"success":0,"errorMessage":"error"})
+
+
 
 #mobileapp toggle
 @app.route('/togglechild', methods = ["POST"])
@@ -566,12 +636,13 @@ def addHouse():
 def getAllHouses():
     db, client = connect_to_db()
     try:
-        houses = db.Houses.find({},{'house_id':1,"name":1, "_id":1})
+        houses = db.Houses.find()
         all_houses = []
         for house in houses:
             house_object={
             "house_id":house['house_id'],
             "name":house['name'],
+            "address":house['address'],
             "_id":str(house['_id'])
             }
 
