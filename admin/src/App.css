@@ -1,0 +1,45 @@
+body {
+	font-weight: 200;
+  font-size: 16px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:focus, a:hover {
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.list {
+  color: #fff;
+  list-style: none;
+  padding-left: 10;
+}
+
+.header {
+  background-color: #E8E6E4;
+}
+
+.header-col {
+  padding: 0;
+}
+
+.logo {
+  width: 200px;
+  margin: 10px;
+}
+
+.sidebar {
+  padding-top: 20px;
+  color: white;
+  background-color: #F36D0F;
+  min-height: 100vh;
+}
+
+.btn-add {
+  padding: 20px 15px;
+}
