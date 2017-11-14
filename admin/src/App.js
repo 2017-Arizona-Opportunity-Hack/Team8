@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import { Router, Route, Switch } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import createBrowserHistory from 'history/createBrowserHistory';
+
+import * as childAction from './actions/child';
+import * as parentAction from './actions/parent';
+import * as houseAction from './actions/house';
 
 import './App.css';
 import Login from './components/Login';
@@ -14,6 +20,16 @@ import Header from './components/Header';
 import LeftNav from './components/LeftNav';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      parents: []
+    };
+  }
+
+  componentDidMount() {
+    this.props.parentAction.fetchParents();
+  }
 
   render() {
     const history = createBrowserHistory();
@@ -50,4 +66,12 @@ class App extends Component {
 
 }
 
-export default App;
+function mapDispatchToProps(dispatch) {
+  return {
+    childAction: bindActionCreators(childAction, dispatch),
+    parentAction: bindActionCreators(parentAction, dispatch),
+    houseAction: bindActionCreators(houseAction, dispatch)
+  }
+}
+
+export default connect(null, mapDispatchToProps)(App);

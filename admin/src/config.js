@@ -1,3 +1,3 @@
 module.exports = {
-  API_URL: 'https://sunshine-acres.herokuapp.com'
+  API_URL: 'https://stormy-gorge-54252.herokuapp.com'
 }
