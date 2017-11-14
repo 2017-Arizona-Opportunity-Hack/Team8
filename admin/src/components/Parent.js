@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as parentAction from '../actions/parent';
 
 const Parent = (props) => {
+  console.log('selected parent id=', props.parent._id);
 
   return (
     <tr>

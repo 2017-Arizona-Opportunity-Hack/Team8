@@ -7,7 +7,7 @@ export default (state=initialState, action) => {
     case 'PARENT_PENDING':
       return state;
     case 'PARENT_FULFILLED':
-      console.log('in PARENT reducer >> ', action.payload.data);
+      console.log('in PARENT reducer >> ', action.payload);
       return [...action.payload.data.all_parents];
     case 'PARENT_REJECTED':
       return state;
