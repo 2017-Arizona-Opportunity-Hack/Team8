@@ -10,12 +10,44 @@ export const fetchParents = () => {
   });
 }
 
-// export const addParent = () => {
-//   return ({
-//     type: 'PARENT_ADD',
-//     payload: ''
-//   });
-// }
+export const addParent = (parent) => {
+  let formdata = new FormData();
+  formdata.append("firstname", parent.firstname);
+  formdata.append("lastname", parent.lastname);
+  formdata.append("phone", parent.phone);
+  formdata.append("email", parent.email);
+  formdata.append("password", parent.password);
+  formdata.append("houses", parent.houses);
+  return ({
+    type: 'PARENT_ADD',
+    payload: axios.post(`${API_URL}/addParent`, formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    // .then(response => id)
+    // .catch(error => console.log(error))
+  });
+}
+
+export const updateParent = (id, parent) => {
+  let formdata = new FormData();
+  formdata.append("_id", id);
+  formdata.append("firstname", parent.firstname);
+  formdata.append("lastname", parent.lastname);
+  formdata.append("phone", parent.phone);
+  formdata.append("email", parent.email);
+  formdata.append("password", parent.password);
+  formdata.append("houses", parent.houses);
+  return ({
+    type: 'PARENT_UPDATE',
+    payload: axios.post(`${API_URL}/updateParent`, formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  });
+}
 
 export const deleteParent = (id, parent) => {
   let formdata = new FormData();
@@ -27,5 +59,28 @@ export const deleteParent = (id, parent) => {
         'Content-Type': 'multipart/form-data'
       }
     })
+    .then(response => id)
+    .catch(error => console.log(error))
   });
 }
+
+// export const deleteParent = (id, parent) => {
+//   let formdata = new FormData();
+//   formdata.append("_id", id);
+//   fetch(`${API_URL}/deleteParent`, {
+//      method: "POST",
+//      body: formdata
+//    })
+//    .then(function(response) {
+//      if (response.status >= 400) {
+//        throw new Error("Bad response from server");
+//      }
+//      return response.json();
+//    })
+//    .then(function(data) {
+//      console.log('in deleteParent >>> data', data);
+//    })
+//    .catch(error => {
+//      console.error(error);
+//    });
+// }

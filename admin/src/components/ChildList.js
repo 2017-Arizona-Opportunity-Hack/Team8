@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Child from './Child';
+// import Child from './Child';
 
 class ChildList extends Component {
 

@@ -29,6 +29,7 @@ class App extends Component {
 
   componentDidMount() {
     this.props.parentAction.fetchParents();
+    this.props.houseAction.fetchHouses();
   }
 
   render() {
@@ -49,12 +50,12 @@ class App extends Component {
             <div className="col-md-10">
               <Switch>
                 <Route exact path="/" component={ChildList} />
-                <Route exact path="/child/add" component={ChildForm} />
+                <Route exact path="/child/:id" component={ChildForm} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/house" component={HouseList} />
-                <Route exact path="/house/add" component={HouseForm} />
+                <Route exact path="/house/:id" component={HouseForm} />
                 <Route exact path="/parent" component={ParentList} />
-                <Route exact path="/parent/add" component={ParentForm} />
+                <Route exact path="/parent/:id" component={ParentForm} />
               </Switch>
             </div>
           </div>
