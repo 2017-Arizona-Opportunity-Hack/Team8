@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import createBrowserHistory from 'history/createBrowserHistory';
+import React, { Component } from "react";
+import { Router, Route, Switch } from "react-router-dom";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import createBrowserHistory from "history/createBrowserHistory";
 
-import * as childAction from './actions/child';
-import * as parentAction from './actions/parent';
-import * as houseAction from './actions/house';
+import * as childAction from "./actions/child";
+import * as parentAction from "./actions/parent";
+import * as houseAction from "./actions/house";
 
-import './App.css';
-import Login from './components/Login';
-import ChildList from './components/ChildList';
-import ChildForm from './components/ChildForm';
-import HouseList from './components/HouseList';
-import HouseForm from './components/HouseForm';
-import ParentList from './components/ParentList';
-import ParentForm from './components/ParentForm';
-import Header from './components/Header';
-import LeftNav from './components/LeftNav';
+import "./App.css";
+import Login from "./components/Login";
+import ChildList from "./components/ChildList";
+import ChildForm from "./components/ChildForm";
+import HouseList from "./components/HouseList";
+import HouseForm from "./components/HouseForm";
+import ParentList from "./components/ParentList";
+import ParentForm from "./components/ParentForm";
+import Header from "./components/Header";
+import LeftNav from "./components/LeftNav";
 
 class App extends Component {
   constructor() {
@@ -29,6 +29,7 @@ class App extends Component {
 
   componentDidMount() {
     this.props.parentAction.fetchParents();
+    this.props.childAction.fetchChildren();
     this.props.houseAction.fetchHouses();
   }
 
@@ -62,9 +63,7 @@ class App extends Component {
         </div>
       </Router>
     );
-
   }
-
 }
 
 function mapDispatchToProps(dispatch) {
@@ -72,7 +71,7 @@ function mapDispatchToProps(dispatch) {
     childAction: bindActionCreators(childAction, dispatch),
     parentAction: bindActionCreators(parentAction, dispatch),
     houseAction: bindActionCreators(houseAction, dispatch)
-  }
+  };
 }
 
 export default connect(null, mapDispatchToProps)(App);

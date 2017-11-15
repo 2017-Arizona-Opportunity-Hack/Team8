@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Field, reduxForm } from 'redux-form';
+import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { Field, reduxForm } from "redux-form";
 
-import * as parentAction from '../actions/parent';
+import * as parentAction from "../actions/parent";
 
-import HouseOption from './HouseOption';
+import HouseOption from "./HouseOption";
 
 class ParentForm extends Component {
   constructor() {
@@ -17,11 +17,13 @@ class ParentForm extends Component {
   }
 
   buildHouseOptions() {
-    return this.props.houses.map(house => <HouseOption key={house._id} house={house} />);
+    return this.props.houses.map(house => (
+      <HouseOption key={house._id} house={house} />
+    ));
   }
 
-  processSubmit = (values) => {
-    console.log('in ParentForm >>> values ', values);
+  processSubmit = values => {
+    console.log("in ParentForm >>> values ", values);
     let parent = {
       lastname: values.lastname,
       firstname: values.firstname,
@@ -31,71 +33,124 @@ class ParentForm extends Component {
       // houses: values.houses
     };
 
-    if (this.props.match.params.id === 'add') {
+    if (this.props.match.params.id === "add") {
       this.props.parentAction.addParent(parent).then(() => {
-        this.props.history.push('/parent');
+        this.props.history.push("/parent");
       });
     } else {
-      console.log('update');
+      console.log("update");
       // this.props.parentAction.updateParent(parseInt(this.props.match.params.id, 10), parent).then(() => {
       //   this.setState({ redirect: true });
       // });
     }
-  }
+  };
 
   render() {
-    console.log('in ParentForm >>> props ', this.props);
+    console.log("in ParentForm >>> props ", this.props);
     return (
       <div className="container">
         <br />
         <div className="alert alert-secondary" role="alert">
           <b>Parent Information</b>
         </div>
-        <form className="form-horizontal" onSubmit={this.props.handleSubmit(this.processSubmit)}>
+        <form
+          className="form-horizontal"
+          onSubmit={this.props.handleSubmit(this.processSubmit)}
+        >
           <fieldset>
             <div className="form-group">
-              <label htmlFor="lastname" className="col-lg-2 control-label">Last Name:</label>
+              <label htmlFor="lastname" className="col-lg-2 control-label">
+                Last Name:
+              </label>
               <div className="col-lg-10">
-                <Field name="lastname" component="input" type="text" className="form-control" placeholder="Enter the last name" autoComplete="off" />
+                <Field
+                  name="lastname"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter the last name"
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="firstname" className="col-lg-2 control-label">First Name:</label>
+              <label htmlFor="firstname" className="col-lg-2 control-label">
+                First Name:
+              </label>
               <div className="col-lg-10">
-                <Field name="firstname" component="input" type="text" className="form-control" placeholder="Enter the first name" autoComplete="off" />
+                <Field
+                  name="firstname"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter the first name"
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="phone" className="col-lg-2 control-label">Phone:</label>
+              <label htmlFor="phone" className="col-lg-2 control-label">
+                Phone:
+              </label>
               <div className="col-lg-10">
-                <Field name="phone" component="input" type="text" className="form-control" placeholder="Enter the phone" autoComplete="off" />
+                <Field
+                  name="phone"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter the phone"
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="email" className="col-lg-2 control-label">Email:</label>
+              <label htmlFor="email" className="col-lg-2 control-label">
+                Email:
+              </label>
               <div className="col-lg-10">
-                <Field name="email" component="input" type="text" className="form-control" placeholder="Enter the email" autoComplete="off" />
+                <Field
+                  name="email"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter the email"
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="password" className="col-lg-2 control-label">Password:</label>
+              <label htmlFor="password" className="col-lg-2 control-label">
+                Password:
+              </label>
               <div className="col-lg-10">
-                <Field name="password" component="input" type="text" className="form-control" placeholder="Enter the password" autoComplete="off" />
+                <Field
+                  name="password"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter the password"
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="form-group">
               <label className="col-lg-2 control-label">Select a house:</label>
               <div className="col-lg-10">
                 <Field name="house" component="select" className="form-control">
-                  <option></option>
-                  { this.buildHouseOptions() }
+                  <option />
+                  {this.buildHouseOptions()}
                 </Field>
               </div>
             </div>
             <div className="form-group">
               <div className="col-lg-10 col-lg-offset-2">
-                <button type="submit" className="btn btn-outline-info">Submit</button> &nbsp;
-                <Link to="/parent" className="btn btn-outline-info">Cancel</Link>
+                <button type="submit" className="btn btn-outline-info">
+                  Submit
+                </button>{" "}
+                &nbsp;
+                <Link to="/parent" className="btn btn-outline-info">
+                  Cancel
+                </Link>
               </div>
             </div>
           </fieldset>
@@ -103,20 +158,21 @@ class ParentForm extends Component {
       </div>
     );
   }
-
 }
 
 function mapStateToProps(state, props) {
   return {
     children: state.children,
     houses: state.houses
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     parentAction: bindActionCreators(parentAction, dispatch)
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({ form: 'client' })(ParentForm));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  reduxForm({ form: "client" })(ParentForm)
+);

@@ -1,16 +1,16 @@
-import axios from 'axios';
-import config from '../config';
+import axios from "axios";
+import config from "../config";
 
 const API_URL = config.API_URL;
 
 export const fetchParents = () => {
-  return ({
-    type: 'PARENT',
+  return {
+    type: "PARENT",
     payload: axios.get(`${API_URL}/getAllParents`)
-  });
-}
+  };
+};
 
-export const addParent = (parent) => {
+export const addParent = parent => {
   let formdata = new FormData();
   formdata.append("firstname", parent.firstname);
   formdata.append("lastname", parent.lastname);
@@ -18,17 +18,17 @@ export const addParent = (parent) => {
   formdata.append("email", parent.email);
   formdata.append("password", parent.password);
   formdata.append("houses", parent.houses);
-  return ({
-    type: 'PARENT_ADD',
+  return {
+    type: "PARENT_ADD",
     payload: axios.post(`${API_URL}/addParent`, formdata, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        "Content-Type": "multipart/form-data"
       }
     })
     // .then(response => id)
     // .catch(error => console.log(error))
-  });
-}
+  };
+};
 
 export const updateParent = (id, parent) => {
   let formdata = new FormData();
@@ -39,48 +39,28 @@ export const updateParent = (id, parent) => {
   formdata.append("email", parent.email);
   formdata.append("password", parent.password);
   formdata.append("houses", parent.houses);
-  return ({
-    type: 'PARENT_UPDATE',
+  return {
+    type: "PARENT_UPDATE",
     payload: axios.post(`${API_URL}/updateParent`, formdata, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        "Content-Type": "multipart/form-data"
       }
     })
-  });
-}
+  };
+};
 
 export const deleteParent = (id, parent) => {
   let formdata = new FormData();
   formdata.append("_id", id);
-  return ({
-    type: 'PARENT_DELETE',
-    payload: axios.post(`${API_URL}/deleteParent`, formdata, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .then(response => id)
-    .catch(error => console.log(error))
-  });
-}
-
-// export const deleteParent = (id, parent) => {
-//   let formdata = new FormData();
-//   formdata.append("_id", id);
-//   fetch(`${API_URL}/deleteParent`, {
-//      method: "POST",
-//      body: formdata
-//    })
-//    .then(function(response) {
-//      if (response.status >= 400) {
-//        throw new Error("Bad response from server");
-//      }
-//      return response.json();
-//    })
-//    .then(function(data) {
-//      console.log('in deleteParent >>> data', data);
-//    })
-//    .catch(error => {
-//      console.error(error);
-//    });
-// }
+  return {
+    type: "PARENT_DELETE",
+    payload: axios
+      .post(`${API_URL}/deleteParent`, formdata, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      .then(response => id)
+      .catch(error => console.log(error))
+  };
+};

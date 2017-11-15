@@ -214,7 +214,7 @@ def addChild():
         if not child:
             _id = db.Children.insert({'first_name':firstname,'last_name':lastname,'age':int(age),'house_id':house_id})
             client.close()
-            return jsonify({'success':1,'errorMessage':'','_id':str(_id)})
+            return jsonify({'success':1,'errorMessage':'','child':{'first_name':firstname,'last_name':lastname,'age':int(age),'house_id':house_id,'_id':str(_id)}})
         else:
             client.close()
             return jsonify({'success':0,'errorMessage':'already exists'})    
@@ -250,15 +250,17 @@ def updateChild():
 @app.route('/deletechild', methods = ["POST"])
 @cross_origin()
 def deleteChild():
+    db, client = connect_to_db()
     try:
-        if request.method == 'POST':
-            db, client = connect_to_db()
-            db.Children.deleteOne({"first_name":request.form['first_name'],"last_name": request.form['last_name']})
-            return "true"
-        else:
-            return "false"
-    except:
-        pass
+        _id = request.form['_id']
+        db.Children.delete_one({"_id": ObjectId(_id)})
+        client.close()
+        return jsonify({'success':1,'errorMessage':''})
+    except Exception as e:
+        print e
+
+    client.close()
+    return jsonify({'success':0,'errorMessage':'error'})
 
 @app.route('/getAllChildren', methods = ["GET"])
 @cross_origin()
@@ -497,6 +499,7 @@ def displayAllParents():
 @cross_origin()
 def addParent():
     db, client = connect_to_db()
+    print len(request.form)  
     try:
         firstname = request.form['firstname']
         lastname = request.form['lastname']
@@ -505,11 +508,13 @@ def addParent():
         phone = request.form['phone']
         houses = request.form['houses'].split(',')
 
+        print firstname,lastname,password,email,phone,houses
+
         parent = db.Parents.find_one({"email":email})
         if not parent:
             _id = db.Parents.insert({"first_name":firstname,"last_name": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone})
             client.close()
-            return jsonify({'success':1,'errorMessage':'','_id':str(_id)})
+            return jsonify({'success':1,'errorMessage':'','parent':{"first_name":firstname,"last_name": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone,'_id':str(_id)}})
 
         else:
             return jsonify({'success':0,'errorMessage':'already exists'})
