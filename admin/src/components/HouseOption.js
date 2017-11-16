@@ -1,8 +1,9 @@
 import React from 'react';
 
 const HouseOption = (props) => {
+  let val = JSON.stringify(props.house);
   return (
-    <option value={props.house._id}>{props.house.name}</option>
+    <option value={val}>{props.house.name}</option>
   );
 }
 

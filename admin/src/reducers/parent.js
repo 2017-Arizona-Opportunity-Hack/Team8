@@ -12,9 +12,9 @@ export default (state = initialState, action) => {
     case "PARENT_ADD_PENDING":
       return state;
     case "PARENT_ADD_FULFILLED":
-      let updatedArr = [...state];
-      updatedArr.push(action.payload.data.parent);
-      return updatedArr;
+      console.log('in parent reducer >>> state', state);
+      console.log('in parent reducer >>> parent', action.payload.data.parent);
+      return [...state, action.payload.data.parent];
     case "PARENT_ADD_REJECTED":
       return state;
 
@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
       return state;
     case "PARENT_UPDATE_FULFILLED":
       console.log("in PARENT_UPDATE reducer >> ", action.payload);
-      return [...action.payload.data.all_parents];
+      return [...state, action.payload.data.parent];
     case "PARENT_UPDATE_REJECTED":
       return state;
 
