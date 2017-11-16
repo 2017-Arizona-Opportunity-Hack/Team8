@@ -247,7 +247,7 @@ def updateChild():
     return jsonify({'success':0,'errorMessage':'error'})
     
 
-@app.route('/deletechild', methods = ["POST"])
+@app.route('/deleteChild', methods = ["POST"])
 @cross_origin()
 def deleteChild():
     db, client = connect_to_db()
@@ -620,7 +620,7 @@ def addHouse():
         if not house:
             max_id = db.Houses.find().sort([('house_id', -1)]).limit(1)[0]["house_id"]
             _id = db.Houses.insert({"name":name,"address": address,"house_id":max_id+1})
-            returnObject = {"success":1,"errorMessage":"",'_id':str(_id)}
+            returnObject = {"success":1,"errorMessage":"",'house':{"name":name,"address": address,"house_id":max_id+1,'_id':str(_id)}}
             client.close()
             return jsonify(returnObject)
         else:
