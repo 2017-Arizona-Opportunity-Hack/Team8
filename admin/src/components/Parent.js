@@ -8,7 +8,12 @@ const Parent = (props) => {
 
   return (
     <tr>
-      <td>{props.parent.lastname}</td>
+      <td>
+        <Link className="view-link" to={{
+          pathname: `/parentDetail/${props.parent._id}`,
+          state: { parent: props.parent }
+        }}>{props.parent.lastname}</Link>
+      </td>
       <td>{props.parent.firstname}</td>
       <td>{props.parent.phone}</td>
       <td>{props.parent.email}</td>

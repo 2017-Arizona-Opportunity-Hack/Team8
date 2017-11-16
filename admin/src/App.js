@@ -16,6 +16,7 @@ import HouseList from "./components/HouseList";
 import HouseForm from "./components/HouseForm";
 import ParentList from "./components/ParentList";
 import ParentForm from "./components/ParentForm";
+import ParentDetail from './components/ParentDetail';
 import Header from "./components/Header";
 import LeftNav from "./components/LeftNav";
 
@@ -57,6 +58,7 @@ class App extends Component {
                 <Route exact path="/house/:id" component={HouseForm} />
                 <Route exact path="/parent" component={ParentList} />
                 <Route exact path="/parent/:id" component={ParentForm} />
+                <Route exact path="/parentDetail/:id" component={ParentDetail} />
               </Switch>
             </div>
           </div>

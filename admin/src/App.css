@@ -43,3 +43,7 @@ a:focus, a:hover {
 .btn-add {
   padding: 20px 15px;
 }
+
+.view-link {
+  color: inherit;
+}
