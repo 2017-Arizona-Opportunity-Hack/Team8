@@ -3,14 +3,32 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
-import * as childAction from "../actions/child";
+import * as houseAction from "../actions/house";
 
 class HouseForm extends Component {
-  logResponse(values) {
-    console.log(values);
-    values.preventDefault();
+  constructor() {
+    super();
+    this.state = {
+      redirect: false
+    };
   }
-
+  processSubmit = values => {
+    console.log("in HouseForm >>> values ", values);
+    let house = {
+      house_name: values.house_name,
+      address: values.address
+    };
+    if (this.props.match.params.id === "add") {
+      this.props.houseAction.addHouse(house).then(() => {
+        this.props.history.push("/house");
+      });
+    } else {
+      console.log("update");
+      // this.props.parentAction.updateParent(parseInt(this.props.match.params.id, 10), parent).then(() => {
+      //   this.setState({ redirect: true });
+      // });
+    }
+  };
   render() {
     return (
       <div className="container">
@@ -18,26 +36,29 @@ class HouseForm extends Component {
         <div className="alert alert-secondary" role="alert">
           <b>House Information</b>
         </div>
-        <form className="form-horizontal" onSubmit={this.logResponse}>
+        <form
+          className="form-horizontal"
+          onSubmit={this.props.handleSubmit(this.processSubmit)}
+        >
           <fieldset>
             <div className="form-group">
-              <label htmlFor="hname" className="col-lg-2 control-label">
+              <label htmlFor="house_name" className="col-lg-2 control-label">
                 House Name:
               </label>
               <div className="col-lg-10">
                 <Field
-                  name="name"
+                  name="house_name"
                   component="input"
                   type="text"
                   className="form-control"
-                  placeholder="Enter the house name"
+                  placeholder="Enter the House name"
                   autoComplete="off"
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="haddress" className="col-lg-2 control-label">
-                House Address:
+              <label htmlFor="address" className="col-lg-2 control-label">
+                First Name:
               </label>
               <div className="col-lg-10">
                 <Field
@@ -45,7 +66,7 @@ class HouseForm extends Component {
                   component="input"
                   type="text"
                   className="form-control"
-                  placeholder="Enter the house address"
+                  placeholder="Enter the House Address"
                   autoComplete="off"
                 />
               </div>
@@ -56,7 +77,7 @@ class HouseForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link to="/house" className="btn btn-outline-info">
+                <Link to="/" className="btn btn-outline-info">
                   Cancel
                 </Link>
               </div>
@@ -70,13 +91,13 @@ class HouseForm extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    children: state.children
+    houses: state.houses
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    childAction: bindActionCreators(childAction, dispatch)
+    houseAction: bindActionCreators(houseAction, dispatch)
   };
 }
 

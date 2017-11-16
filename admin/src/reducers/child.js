@@ -13,8 +13,7 @@ export default (state = initialState, action) => {
       return state;
     case "CHILD_ADD_FULFILLED":
       // let updatedArr = [...state];
-      state.push(action.payload.data.child);
-      return state;
+      return [...state, action.payload.data.child];
     case "CHILD_ADD_REJECTED":
       return state;
 
