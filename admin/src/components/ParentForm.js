@@ -11,7 +11,7 @@ import HouseOption from './HouseOption';
 import HouseButton from './HouseButton';
 
 const ParentForm = (props) => {
-  console.log('in ParentForm >>> props ', props);
+  // console.log('in ParentForm >>> props ', props);
 
   const buildHouseOptions = () => {
     return props.houses.map(house =>
@@ -20,6 +20,7 @@ const ParentForm = (props) => {
   }
 
   const buildHouseButtons = () => {
+    console.log('in buildHouseButtons >>> selectedHouses ', props.selectedHouses);
     return props.selectedHouses.map((house, i) =>
       <HouseButton key={i} house={house} />
     );
@@ -43,9 +44,16 @@ const ParentForm = (props) => {
       console.log('in handleChange >>> houseArr ', houseArr);
       props.selectedHousesAction.getSelectedHouse(houseArr);
     } else {
+      console.log('in handleChange >>> value ', value);
       props.selectedHousesAction.getSelectedHouse(value);
     }
   }
+
+  // const handleChange = (e) => {
+  //   console.log('in handleChange >>> value=', e.target.value);
+  //   let value = JSON.parse(e.target.value);
+  //   props.selectedHousesAction.getSelectedHouse(value);
+  // }
 
   const processSubmit = (values) => {
     // console.log('in processSubmit >>> props', props);
