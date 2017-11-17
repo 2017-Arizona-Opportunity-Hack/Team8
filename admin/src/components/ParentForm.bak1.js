@@ -5,23 +5,24 @@ import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
 
 import * as parentAction from "../actions/parent";
-import * as selectedHousesAction from '../actions/selectedHouses';
+import * as selectedHousesAction from "../actions/selectedHouses";
 
 import HouseOption from "./HouseOption";
 
-const handleChange = (e) => {
-  console.log('in handleChange >>> value=', e.target.value);
+const handleChange = e => {
+  console.log("in handleChange >>> value=", e.target.value);
   let value = JSON.parse(e.target.value);
-  this.props.selectedHousesAction.getSelectedHouse(value);
-}
+  console.log(value);
+  // this.props.selectedHousesAction.getSelectedHouse(value);
+};
 
 class ParentForm extends Component {
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     houses: []
-  //   };
-  // }
+  constructor() {
+    super();
+    this.state = {
+      houses: []
+    };
+  }
 
   buildHouseOptions() {
     return this.props.houses.map(house => (
@@ -50,7 +51,7 @@ class ParentForm extends Component {
       //   this.setState({ redirect: true });
       // });
     }
-  };
+  }
 
   render() {
     console.log("in ParentForm >>> props ", this.props);
@@ -72,16 +73,15 @@ class ParentForm extends Component {
                   name="house"
                   component="select"
                   onChange={handleChange}
-                  className="form-control">
+                  className="form-control"
+                >
                   <option />
                   {this.buildHouseOptions()}
                 </Field>
               </div>
             </div>
             <div className="form-group">
-              <label className="col control-label">
-                Selected house:
-              </label>
+              <label className="col control-label">Selected house:</label>
             </div>
             <div className="form-group">
               <label htmlFor="lastname" className="col-lg-2 control-label">

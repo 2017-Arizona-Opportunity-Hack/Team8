@@ -39,26 +39,27 @@ def show_user_profile(username):
 @app.route('/', methods = ["GET","POST"])
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
+    db,client = connect_to_db()
+    try:
+        email = request.form['email']
         password = request.form['password']
-        db,client = connect_to_db()
-        dict = db.admin.find_one({'username': username}, {'username':1, 'password': 1})
-        if dict:
-            if dict['password'] == password:
-                #session['username'] = request.form['username']
-                # update_dict = {}
-                timestamp= datetime.datetime.now()
-                db.users.update_many({},{'$set':{'logged_in': False}})
-                db.users.find_one_and_update({'username': username},{'$push':{'timestamp': timestamp}, '$set':{'logged_in': True}})
+        admin = db.Admin.find_one({'email': email}, {'username':1, 'password': 1})
+        if admin:
+            if str(admin['password']) == str(password):
                 client.close()
-                return redirect(url_for('show_user_profile', username=username))
+                return jsonify({'success':1,'errorMessage':''})
+            else:
+                client.close()
+                return jsonify({'success':0,'errorMessage':'wrong password'})
+
         else:
             client.close()
-            return "No such admin registered with the website"
-    else:
-        return render_template('index.html')
+            return jsonify({'success':0,'errorMessage':'no admin'})
+    except Exception as e:
+        print e
 
+    client.close()
+    return jsonify({'success':0,'errorMessage':'error'})
 
 @app.route('/parentlogin', methods = ['POST'])
 def parentlogin():
@@ -539,7 +540,7 @@ def editParent():
         houses = request.form['houses'].split(",")
         db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"first_name":firstname,"last_name": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone}}, upsert=False)
         client.close()
-        return jsonify({'success':1,'errorMessage':''})
+        return jsonify({'success':1,'errorMessage':'','parent':{"_id":_id,"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"house_id": houses,"phone": phone}})
     except Exception as e:
         print e
 

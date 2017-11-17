@@ -1,53 +1,67 @@
-import React from 'react';
+import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
 
 import * as parentAction from "../actions/parent";
-import * as selectedHousesAction from '../actions/selectedHouses';
+import * as selectedHousesAction from "../actions/selectedHouses";
 
-import HouseOption from './HouseOption';
-import HouseButton from './HouseButton';
+import HouseOption from "./HouseOption";
+import HouseButton from "./HouseButton";
 
-const ParentForm = (props) => {
-  // console.log('in ParentForm >>> props ', props);
+const ParentForm = props => {
+  console.log("in ParentForm >>> props ", props);
+
+  const array = [];
 
   const buildHouseOptions = () => {
-    return props.houses.map(house =>
+    return props.houses.map(house => (
       <HouseOption key={house._id} house={house} />
-    );
-  }
+    ));
+  };
 
   const buildHouseButtons = () => {
-    console.log('in buildHouseButtons >>> selectedHouses ', props.selectedHouses);
-    return props.selectedHouses.map((house, i) =>
-      <HouseButton key={i} house={house} />
+    console.log(
+      "in buildHouseButtons >>> selectedHouses ",
+      props.selectedHouses
     );
-  }
+    return props.selectedHouses.map((house, i) => (
+      <HouseButton
+        key={i}
+        house={house}
+        selectedHousesAction={selectedHousesAction}
+      />
+    ));
+  };
 
-  const handleChange = (e) => {
-    console.log('in handleChange >>> value=', e.target.value);
-    let houseArr = [];
-    let value = JSON.parse(e.target.value);
-    houseArr.push(value);
-    if (props.location.state) {
-      let { parent } = props.location.state;
-      console.log('in handleChange >>> parent ', parent);
-      parent.house_id.forEach(id => {
-        props.houses.forEach(house => {
-          if (house._id === id) {
-            houseArr.push(house);
-          }
-        });
-      });
-      console.log('in handleChange >>> houseArr ', houseArr);
-      props.selectedHousesAction.getSelectedHouse(houseArr);
-    } else {
-      console.log('in handleChange >>> value ', value);
-      props.selectedHousesAction.getSelectedHouse(value);
-    }
-  }
+  const handleChange = e => {
+    console.log("in handleChange >>> value=", e.target.value);
+    var house = JSON.parse(e.target.value);
+    console.log("blah", JSON.parse(e.target.value).address);
+    array.push(house);
+    console.log(array);
+    props.selectedHousesAction.getSelectedHouse(house);
+    // let houseArr = [];
+    // let value = JSON.parse(e.target.value);
+    // houseArr.push(value);
+    // if (props.location.state) {
+    //   let { parent } = props.location.state;
+    //   console.log('in handleChange >>> parent ', parent);
+    //   parent.house_id.forEach(id => {
+    //     props.houses.forEach(house => {
+    //       if (house._id === id) {
+    //         houseArr.push(house);
+    //       }
+    //     });
+    //   });
+    //   console.log('in handleChange >>> houseArr ', houseArr);
+    //   props.selectedHousesAction.getSelectedHouse(houseArr);
+    // } else {
+    //   console.log('in handleChange >>> value ', value);
+    //   props.selectedHousesAction.getSelectedHouse(value);
+    // }
+  };
 
   // const handleChange = (e) => {
   //   console.log('in handleChange >>> value=', e.target.value);
@@ -55,7 +69,7 @@ const ParentForm = (props) => {
   //   props.selectedHousesAction.getSelectedHouse(value);
   // }
 
-  const processSubmit = (values) => {
+  const processSubmit = values => {
     // console.log('in processSubmit >>> props', props);
     let houseIds = [];
     props.selectedHouses.forEach(house => houseIds.push(house._id));
@@ -67,18 +81,20 @@ const ParentForm = (props) => {
       password: values.password,
       houses: houseIds
     };
-    console.log('in processSubmit >>> parent', parent);
+    console.log("in processSubmit >>> parent", parent);
 
     if (props.match.params.id === "add") {
-      console.log('add');
+      console.log("add");
       props.parentAction.addParent(parent).then(() => {
         props.history.push("/parent");
       });
     } else {
       console.log("update");
-      props.parentAction.updateParent(props.match.params.id, parent).then(() => {
-        props.history.push("/parent");
-      });
+      props.parentAction
+        .updateParent(props.match.params.id, parent)
+        .then(() => {
+          props.history.push("/parent");
+        });
     }
   };
 
@@ -100,7 +116,8 @@ const ParentForm = (props) => {
                 name="house"
                 component="select"
                 onChange={handleChange}
-                className="form-control">
+                className="form-control"
+              >
                 <option />
                 {buildHouseOptions()}
               </Field>
@@ -202,7 +219,7 @@ const ParentForm = (props) => {
       </form>
     </div>
   );
-}
+};
 
 function mapStateToProps(state, props) {
   return {
