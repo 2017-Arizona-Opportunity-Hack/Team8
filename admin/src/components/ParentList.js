@@ -11,7 +11,7 @@ class ParentList extends Component {
   }
 
   render() {
-    console.log('in ParentList >>> ', this.props);
+    // console.log('in ParentList >>> ', this.props);
     return (
       <div className="container">
 

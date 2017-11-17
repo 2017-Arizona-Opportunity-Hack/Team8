@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ParentDetail = (props) => {
-  let { firstname, lastname, email, phone, password, house_id } = props.location.state.parent;
+  let { firstname, lastname, email, phone, house_id } = props.location.state.parent;
   return (
     <div className="container">
       <br />

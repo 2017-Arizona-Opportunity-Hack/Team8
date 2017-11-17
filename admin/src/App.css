@@ -44,6 +44,10 @@ a:focus, a:hover {
   padding: 20px 15px;
 }
 
+.btn-house {
+	margin-right: 5px;
+}
+
 .view-link {
   color: inherit;
 }

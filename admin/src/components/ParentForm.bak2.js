@@ -19,57 +19,38 @@ const ParentForm = (props) => {
     );
   }
 
-  // const buildHouseButtons = () => {
-  //   // console.log('in buildHouseButtons >>> props ', props);
-  //   if (props.location.state) {
-  //     let houseArr = [];
-  //     let { parent } = props.location.state;
-  //     // console.log('in buildHouseButtons >>> house IDs:', parent.house_id);
-  //     parent.house_id.forEach(id => {
-  //       props.houses.forEach(house => {
-  //         // console.log('in forEach houses >>> id:', id);
-  //         // console.log('in forEach houses >>> house:', house);
-  //         if (house._id === id) {
-  //           houseArr.push(house);
-  //         }
-  //       });
-  //     });
-  //     console.log('in buildHouseButtons >>> houseArr ', houseArr);
-  //     // console.log('in buildHouseButtons >>> parent ', parent);
-  //     if (houseArr.length > 0) {
-  //       return houseArr.map((house, i) =>
-  //         <HouseButton key={i} house={house} />
-  //       );
-  //     }
-  //   } else {
-  //     return props.selectedHouses.map((house, i) =>
-  //       <HouseButton key={i} house={house} />
-  //     );
-  //   }
-  // }
-
   const buildHouseButtons = () => {
-    return props.selectedHouses.map((house, i) =>
-      <HouseButton key={i} house={house} />
-    );
-  }
-
-  const handleChange = (e) => {
-    console.log('in handleChange >>> value=', e.target.value);
-    let houseArr = [];
-    let value = JSON.parse(e.target.value);
-    houseArr.push(value);
+    // console.log('in buildHouseButtons >>> props ', props);
     if (props.location.state) {
+      let houseArr = [];
       let { parent } = props.location.state;
+      // console.log('in buildHouseButtons >>> house IDs:', parent.house_id);
       parent.house_id.forEach(id => {
         props.houses.forEach(house => {
+          // console.log('in forEach houses >>> id:', id);
+          // console.log('in forEach houses >>> house:', house);
           if (house._id === id) {
             houseArr.push(house);
           }
         });
       });
-      console.log('in handleChange >>> houseArr ', houseArr);
+      console.log('in buildHouseButtons >>> houseArr ', houseArr);
+      // console.log('in buildHouseButtons >>> parent ', parent);
+      if (houseArr.length > 0) {
+        return houseArr.map((house, i) =>
+          <HouseButton key={i} house={house} />
+        );
+      }
+    } else {
+      return props.selectedHouses.map((house, i) =>
+        <HouseButton key={i} house={house} />
+      );
     }
+  }
+
+  const handleChange = (e) => {
+    console.log('in handleChange >>> value=', e.target.value);
+    let value = JSON.parse(e.target.value);
     props.selectedHousesAction.getSelectedHouse(value);
   }
 

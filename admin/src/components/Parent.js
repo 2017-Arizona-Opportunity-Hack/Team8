@@ -18,8 +18,10 @@ const Parent = (props) => {
       <td>{props.parent.phone}</td>
       <td>{props.parent.email}</td>
       <td>
-        <Link className="btn btn-outline-info" to={`/parent/${props.parent._id}`}><i className="fa fa-pencil" aria-hidden="true"></i>
-        </Link> &nbsp;
+        <Link className="btn btn-outline-info" to={{
+          pathname: `/parent/${props.parent._id}`,
+          state: { parent: props.parent }
+        }}><i className="fa fa-pencil" aria-hidden="true"></i></Link>&nbsp;
         <a className="btn btn-outline-danger" onClick={() => props.parentAction.deleteParent(props.parent._id, props.parent)} aria-label="Delete">
           <i className="fa fa-trash-o" aria-hidden="true"></i>
         </a>
