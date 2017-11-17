@@ -11,42 +11,13 @@ import HouseOption from './HouseOption';
 import HouseButton from './HouseButton';
 
 const ParentForm = (props) => {
+  console.log('in ParentForm >>> props ', props);
 
   const buildHouseOptions = () => {
-    // console.log('in buildHouseOptions >>> props ', props);
     return props.houses.map(house =>
       <HouseOption key={house._id} house={house} />
     );
   }
-
-  // const buildHouseButtons = () => {
-  //   // console.log('in buildHouseButtons >>> props ', props);
-  //   if (props.location.state) {
-  //     let houseArr = [];
-  //     let { parent } = props.location.state;
-  //     // console.log('in buildHouseButtons >>> house IDs:', parent.house_id);
-  //     parent.house_id.forEach(id => {
-  //       props.houses.forEach(house => {
-  //         // console.log('in forEach houses >>> id:', id);
-  //         // console.log('in forEach houses >>> house:', house);
-  //         if (house._id === id) {
-  //           houseArr.push(house);
-  //         }
-  //       });
-  //     });
-  //     console.log('in buildHouseButtons >>> houseArr ', houseArr);
-  //     // console.log('in buildHouseButtons >>> parent ', parent);
-  //     if (houseArr.length > 0) {
-  //       return houseArr.map((house, i) =>
-  //         <HouseButton key={i} house={house} />
-  //       );
-  //     }
-  //   } else {
-  //     return props.selectedHouses.map((house, i) =>
-  //       <HouseButton key={i} house={house} />
-  //     );
-  //   }
-  // }
 
   const buildHouseButtons = () => {
     return props.selectedHouses.map((house, i) =>
@@ -61,6 +32,7 @@ const ParentForm = (props) => {
     houseArr.push(value);
     if (props.location.state) {
       let { parent } = props.location.state;
+      console.log('in handleChange >>> parent ', parent);
       parent.house_id.forEach(id => {
         props.houses.forEach(house => {
           if (house._id === id) {
@@ -69,8 +41,10 @@ const ParentForm = (props) => {
         });
       });
       console.log('in handleChange >>> houseArr ', houseArr);
+      props.selectedHousesAction.getSelectedHouse(houseArr);
+    } else {
+      props.selectedHousesAction.getSelectedHouse(value);
     }
-    props.selectedHousesAction.getSelectedHouse(value);
   }
 
   const processSubmit = (values) => {
