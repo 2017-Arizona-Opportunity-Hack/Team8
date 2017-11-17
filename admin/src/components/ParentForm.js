@@ -43,8 +43,6 @@ const ParentForm = props => {
     array.push(house);
     props.selectedHousesAction.getSelectedHouse(house);
     // props.selectedHouses.push(house);
-    console.log("in handleChange after >>> value=", props.selectedHouses);
-
     // let houseArr = [];
     // let value = JSON.parse(e.target.value);
     // houseArr.push(value);
@@ -224,7 +222,6 @@ const ParentForm = props => {
   );
 };
 function generateInitialHouses(props, state) {
-  console.log("SULA", state.selectedHouses.length);
   if (state.selectedHouses.length == 0) {
     var parent = props.location.state.parent;
     var house_id = parent["house_id"];
