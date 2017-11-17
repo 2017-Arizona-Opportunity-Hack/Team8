@@ -191,14 +191,14 @@ const ParentForm = props => {
   );
 };
 function generateInitialHouses(props, state) {
-  if (state.selectedHouses.length == 0) {
+  if (state.selectedHouses.length === 0) {
     var parent = props.location.state.parent;
     var house_id = parent["house_id"];
     var houses = [];
     for (var i = 0; i < house_id.length; i++) {
       var id = house_id[i];
       for (var j = 0; j < state.houses.length; j++) {
-        if (state.houses[j]["_id"] == id) {
+        if (state.houses[j]["_id"] === id) {
           houses.push(state.houses[j]);
         }
       }

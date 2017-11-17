@@ -51,3 +51,22 @@ a:focus, a:hover {
 .view-link {
   color: inherit;
 }
+
+/* Start Login Form Styles */
+
+.card-container.card {
+  max-width: 350px;
+  padding: 40px 40px;
+	background-color: #FAF9FC;
+}
+
+.profile-img {
+	margin-top: 50px;
+	margin-bottom: 100px;
+}
+
+.spacer {
+  margin-top: 100px;
+}
+
+/* End Login Form Styles */

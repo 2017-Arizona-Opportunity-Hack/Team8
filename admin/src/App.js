@@ -21,12 +21,6 @@ import Header from "./components/Header";
 import LeftNav from "./components/LeftNav";
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      parents: []
-    };
-  }
 
   componentDidMount() {
     this.props.parentAction.fetchParents();
@@ -37,35 +31,82 @@ class App extends Component {
   render() {
     const history = createBrowserHistory();
 
-    return (
-      <Router history={history}>
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col header-col">
-              <Header />
+    console.log('in App >>> state.currentUser=', this.props.currentUser);
+
+    if (this.props.currentUser === null) {
+
+      return (
+        <Router history={history}>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-4"></div>
+              <div className="col-md-4">
+                <Switch>
+                  <Route exact path="/" component={Login} />
+                </Switch>
+              </div>
+              <div className="col-md-4"></div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-md-2 sidebar">
-              <LeftNav />
+        </Router>
+      );
+
+    } else {
+
+      if (this.props.currentUser.length === 0) {
+        return (
+          <Router history={history}>
+            <div className="container">
+              <div className="row">
+                <div className="col-md-4"></div>
+                <div className="col-md-4">
+                  <Switch>
+                    <Route exact path="/" component={Login} />
+                  </Switch>
+                </div>
+                <div className="col-md-4"></div>
+              </div>
             </div>
-            <div className="col-md-10">
-              <Switch>
-                <Route exact path="/" component={ChildList} />
-                <Route exact path="/child/:id" component={ChildForm} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/house" component={HouseList} />
-                <Route exact path="/house/:id" component={HouseForm} />
-                <Route exact path="/parent" component={ParentList} />
-                <Route exact path="/parent/:id" component={ParentForm} />
-                <Route exact path="/parentDetail/:id" component={ParentDetail} />
-              </Switch>
+          </Router>
+        );
+      } else {
+        return (
+          <Router history={history}>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col header-col">
+                  <Header />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-md-2 sidebar">
+                  <LeftNav />
+                </div>
+                <div className="col-md-10">
+                  <Switch>
+                    <Route exact path="/" component={ChildList} />
+                    <Route exact path="/child/:id" component={ChildForm} />
+                    <Route exact path="/house" component={HouseList} />
+                    <Route exact path="/house/:id" component={HouseForm} />
+                    <Route exact path="/parent" component={ParentList} />
+                    <Route exact path="/parent/:id" component={ParentForm} />
+                    <Route exact path="/parentDetail/:id" component={ParentDetail} />
+                  </Switch>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </Router>
-    );
+          </Router>
+        )
+      }
+    }
+
   }
+}
+
+function mapStateToProps(state, props) {
+  return {
+    currentUser: state.currentUser
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -76,4 +117,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
