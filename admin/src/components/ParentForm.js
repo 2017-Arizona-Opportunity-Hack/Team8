@@ -23,11 +23,6 @@ const ParentForm = props => {
 
   const buildHouseButtons = () => {
     console.log("in buildHouseButtons >>> selectedHouses ", props);
-
-    // for (var i = 0; i < props.selectedHouses.length; i++) {
-    //   props.selectedHousesAction.getSelectedHouse(props.houses[i]);
-    // }
-
     return props.selectedHouses.map((house, i) => (
       <HouseButton
         key={i}
@@ -42,33 +37,7 @@ const ParentForm = props => {
     var house = JSON.parse(e.target.value);
     array.push(house);
     props.selectedHousesAction.getSelectedHouse(house);
-    // props.selectedHouses.push(house);
-    // let houseArr = [];
-    // let value = JSON.parse(e.target.value);
-    // houseArr.push(value);
-    // if (props.location.state) {
-    //   let { parent } = props.location.state;
-    //   console.log('in handleChange >>> parent ', parent);
-    //   parent.house_id.forEach(id => {
-    //     props.houses.forEach(house => {
-    //       if (house._id === id) {
-    //         houseArr.push(house);
-    //       }
-    //     });
-    //   });
-    //   console.log('in handleChange >>> houseArr ', houseArr);
-    //   props.selectedHousesAction.getSelectedHouse(houseArr);
-    // } else {
-    //   console.log('in handleChange >>> value ', value);
-    //   props.selectedHousesAction.getSelectedHouse(value);
-    // }
   };
-
-  // const handleChange = (e) => {
-  //   console.log('in handleChange >>> value=', e.target.value);
-  //   let value = JSON.parse(e.target.value);
-  //   props.selectedHousesAction.getSelectedHouse(value);
-  // }
 
   const processSubmit = values => {
     // console.log('in processSubmit >>> props', props);
