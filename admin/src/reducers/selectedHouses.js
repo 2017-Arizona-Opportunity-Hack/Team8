@@ -7,6 +7,7 @@ export default (state = initialState, action) => {
       return state;
     case "SELECTED_HOUSES_FULFILLED":
       console.log("in selectedHouses reducer, payload: ", action.payload);
+      console.log("Hula hula,", state);
       console.log([...state, ...action.payload], "BCcccc");
       return [...state, action.payload];
     case "SELECTED_HOUSES_REJECTED":

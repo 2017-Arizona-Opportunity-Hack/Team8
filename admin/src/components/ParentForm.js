@@ -22,10 +22,12 @@ const ParentForm = props => {
   };
 
   const buildHouseButtons = () => {
-    console.log(
-      "in buildHouseButtons >>> selectedHouses ",
-      props.selectedHouses
-    );
+    console.log("in buildHouseButtons >>> selectedHouses ", props);
+
+    // for (var i = 0; i < props.selectedHouses.length; i++) {
+    //   props.selectedHousesAction.getSelectedHouse(props.houses[i]);
+    // }
+
     return props.selectedHouses.map((house, i) => (
       <HouseButton
         key={i}
@@ -36,12 +38,13 @@ const ParentForm = props => {
   };
 
   const handleChange = e => {
-    console.log("in handleChange >>> value=", e.target.value);
+    console.log("in handleChange >>> value=", props.selectedHouses);
     var house = JSON.parse(e.target.value);
-    console.log("blah", JSON.parse(e.target.value).address);
     array.push(house);
-    console.log(array);
     props.selectedHousesAction.getSelectedHouse(house);
+    // props.selectedHouses.push(house);
+    console.log("in handleChange after >>> value=", props.selectedHouses);
+
     // let houseArr = [];
     // let value = JSON.parse(e.target.value);
     // houseArr.push(value);
@@ -220,13 +223,34 @@ const ParentForm = props => {
     </div>
   );
 };
-
+function generateInitialHouses(props, state) {
+  console.log("SULA", state.selectedHouses.length);
+  if (state.selectedHouses.length == 0) {
+    var parent = props.location.state.parent;
+    var house_id = parent["house_id"];
+    var houses = [];
+    for (var i = 0; i < house_id.length; i++) {
+      var id = house_id[i];
+      for (var j = 0; j < state.houses.length; j++) {
+        if (state.houses[j]["_id"] == id) {
+          houses.push(state.houses[j]);
+        }
+      }
+    }
+    state.selectedHouses = houses;
+    return state.selectedHouses;
+  } else {
+    return state.selectedHouses;
+  }
+}
 function mapStateToProps(state, props) {
   return {
     children: state.children,
     parents: state.parents,
     houses: state.houses,
-    selectedHouses: state.selectedHouses,
+    selectedHouses: props.location.state
+      ? generateInitialHouses(props, state)
+      : state.selectedHouses,
     initialValues: props.location.state ? props.location.state.parent : null
   };
 }
