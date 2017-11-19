@@ -12,7 +12,10 @@ const House = props => {
       <td>
         <Link
           className="btn btn-outline-info"
-          to={`/client/${props.house._id}`}
+          to={{
+            pathname: `/house/${props.house._id}`,
+            state: { house: props.house }
+          }}
         >
           <i className="fa fa-pencil" aria-hidden="true" />
         </Link>{" "}

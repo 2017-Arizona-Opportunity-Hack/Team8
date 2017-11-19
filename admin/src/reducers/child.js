@@ -5,7 +5,12 @@ export default (state = initialState, action) => {
     case "CHILD_PENDING":
       return state;
     case "CHILD_FULFILLED":
-      return action.payload.data.all_children;
+      var st = action.payload.data.all_children;
+      for (var i = 0; i < st.length; i++) {
+        var d = JSON.stringify(st[i]["house"]);
+        st[i]["house"] = d;
+      }
+      return st;
     case "CHILD_REJECTED":
       return state;
 
@@ -13,7 +18,10 @@ export default (state = initialState, action) => {
       return state;
     case "CHILD_ADD_FULFILLED":
       // let updatedArr = [...state];
-      return [...state, action.payload.data.child];
+      var st = action.payload.data.child;
+      var d = JSON.stringify(st["house"]);
+      st["house"] = d;
+      return [...state, st];
     case "CHILD_ADD_REJECTED":
       return state;
 
@@ -21,7 +29,16 @@ export default (state = initialState, action) => {
       return state;
     case "CHILD_UPDATE_FULFILLED":
       console.log("in CHILD_UPDATE reducer >> ", action.payload);
-      return [...action.payload.data.all_children];
+      var tmpArr = state;
+      for (var i = 0; i < tmpArr.length; i++) {
+        if (tmpArr[i]._id === action.payload.data.child._id) {
+          var st = action.payload.data.child;
+          var d = JSON.stringify(st["house"]);
+          st["house"] = d;
+          tmpArr[i] = st;
+        }
+      }
+      return [...tmpArr];
     case "CHILD_UPDATE_REJECTED":
       return state;
 

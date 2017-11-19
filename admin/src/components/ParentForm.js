@@ -2,7 +2,7 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Field, reduxForm } from "redux-form";
+import { Field, FieldArray, reduxForm } from "redux-form";
 
 import * as parentAction from "../actions/parent";
 import * as selectedHousesAction from "../actions/selectedHouses";
@@ -10,6 +10,40 @@ import * as selectedHousesAction from "../actions/selectedHouses";
 import HouseOption from "./HouseOption";
 import HouseButton from "./HouseButton";
 
+const renderHouses = ({
+  fields,
+  meta: { touched, error },
+  buildHouseOptions
+}) => (
+  <div>
+    <Field
+      name="house_select"
+      component="select"
+      onChange={e => fields.push(JSON.parse(e.target.value))}
+      className="form-control"
+    >
+      <option />
+      {buildHouseOptions()}
+    </Field>
+    <div className="form-group" name="houses">
+      Selected houses:<br />
+      {fields.map((house, index) => (
+        <button
+          type="button"
+          key={index}
+          className="btn btn-info btn-sm btn-house"
+        >
+          {fields.getAll()[index].name}
+          <i
+            className="fa fa-times-circle"
+            aria-hidden="true"
+            onClick={() => fields.remove(index)}
+          />
+        </button>
+      ))}
+    </div>
+  </div>
+);
 const ParentForm = props => {
   console.log("in ParentForm >>> props ", props);
 
@@ -21,38 +55,45 @@ const ParentForm = props => {
     ));
   };
 
-  const buildHouseButtons = () => {
+  const buildHouseButtons = values => {
     console.log("in buildHouseButtons >>> selectedHouses ", props);
-    return props.selectedHouses.map((house, i) => (
-      <HouseButton
-        key={i}
-        house={house}
-        selectedHousesAction={selectedHousesAction}
-      />
-    ));
+    console.log("in buildHousesButton house select");
+
+    if (props.initialValues) {
+      return props.initialValues.houses.map((house, i) => (
+        <HouseButton
+          key={i}
+          house={house}
+          selectedHousesAction={selectedHousesAction}
+        />
+      ));
+    } else return;
   };
 
   const handleChange = e => {
-    console.log("in handleChange >>> value=", props.selectedHouses);
+    console.log("in handleChange >>> value=", e.target.value);
     var house = JSON.parse(e.target.value);
     array.push(house);
-    props.selectedHousesAction.getSelectedHouse(house);
+    // props.initialValues.houses.push(house);
   };
 
   const processSubmit = values => {
+    console.log("Extreme Values", values);
     // console.log('in processSubmit >>> props', props);
-    let houseIds = [];
-    props.selectedHouses.forEach(house => houseIds.push(house._id));
+    // let houseIds = [];
+    // props.selectedHouses.forEach(house =>
+    //   houseIds.push({ _id: house._id, name: house.name })
+    // );
     let parent = {
       lastname: values.lastname,
       firstname: values.firstname,
       phone: values.phone,
       email: values.email,
       password: values.password,
-      houses: houseIds
+      houses: values.houses
     };
-    console.log("in processSubmit >>> parent", parent);
-
+    // console.log("in processSubmit >>> parent", parent);
+    //
     if (props.match.params.id === "add") {
       console.log("add");
       props.parentAction.addParent(parent).then(() => {
@@ -82,22 +123,12 @@ const ParentForm = props => {
           <div className="form-group">
             <label className="col-lg-2 control-label">Select a house:</label>
             <div className="col-lg-10">
-              <Field
-                name="house"
-                component="select"
-                onChange={handleChange}
-                className="form-control"
-              >
-                <option />
-                {buildHouseOptions()}
-              </Field>
+              <FieldArray
+                name="houses"
+                component={renderHouses}
+                buildHouseOptions={buildHouseOptions}
+              />
             </div>
-          </div>
-          <div className="form-group">
-            <label className="col control-label">
-              Selected houses:<br />
-              {buildHouseButtons(props)}
-            </label>
           </div>
           <div className="form-group">
             <label htmlFor="lastname" className="col-lg-2 control-label">
@@ -190,33 +221,42 @@ const ParentForm = props => {
     </div>
   );
 };
-function generateInitialHouses(props, state) {
+/*function generateInitialHouses(props, state) {
   if (state.selectedHouses.length === 0) {
-    var parent = props.location.state.parent;
-    var house_id = parent["house_id"];
-    var houses = [];
-    for (var i = 0; i < house_id.length; i++) {
-      var id = house_id[i];
-      for (var j = 0; j < state.houses.length; j++) {
-        if (state.houses[j]["_id"] === id) {
-          houses.push(state.houses[j]);
+    console.log("State");
+    if (props.location.state) {
+      console.log("boolean");
+      var parent = props.location.state.parent;
+
+      var house_id = parent["house_id"];
+      var houses = [];
+      for (var i = 0; i < house_id.length; i++) {
+        var id = house_id[i];
+        for (var j = 0; j < state.houses.length; j++) {
+          if (state.houses[j]["_id"] === id) {
+            houses.push(state.houses[j]);
+          }
         }
       }
+      state.selectedHouses = houses;
+      return state.selectedHouses;
+    } else {
+      // state.selectedHouses = [];
+      return state.selectedHouses;
     }
-    state.selectedHouses = houses;
-    return state.selectedHouses;
   } else {
+    if (props.match.params.id === "add") {
+      state.selectedHouses = [];
+    }
     return state.selectedHouses;
   }
 }
+*/
 function mapStateToProps(state, props) {
   return {
     children: state.children,
     parents: state.parents,
     houses: state.houses,
-    selectedHouses: props.location.state
-      ? generateInitialHouses(props, state)
-      : state.selectedHouses,
     initialValues: props.location.state ? props.location.state.parent : null
   };
 }

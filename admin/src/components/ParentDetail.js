@@ -1,17 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-const ParentDetail = (props) => {
-  let { firstname, lastname, email, phone, house_id } = props.location.state.parent;
+const ParentDetail = props => {
+  let {
+    firstname,
+    lastname,
+    email,
+    houses,
+    phone,
+    house_id
+  } = props.location.state.parent;
   return (
     <div className="container">
       <br />
       <div className="card">
-        <div className="card-header"><strong>
-          {`${props.location.state.parent.firstname} ${props.location.state.parent.lastname}`}
-        </strong></div>
+        <div className="card-header">
+          <strong>
+            {`${props.location.state.parent.firstname} ${props.location.state
+              .parent.lastname}`}
+          </strong>
+        </div>
         <ul className="list-group list-group-flush">
-          <li className="list-group-item">Houses: {house_id}</li>
+          <li className="list-group-item">Houses: {houses}</li>
           <li className="list-group-item">First name: {firstname}</li>
           <li className="list-group-item">Last name: {lastname}</li>
           <li className="list-group-item">Email: {email}</li>
@@ -24,7 +34,6 @@ const ParentDetail = (props) => {
       </Link>
     </div>
   );
-
-}
+};
 
 export default ParentDetail;

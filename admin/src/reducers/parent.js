@@ -5,6 +5,7 @@ export default (state = initialState, action) => {
     case "PARENT_PENDING":
       return state;
     case "PARENT_FULFILLED":
+      console.log("Parent state", action.payload.data.all_parents);
       return action.payload.data.all_parents;
     case "PARENT_REJECTED":
       return state;
@@ -14,7 +15,8 @@ export default (state = initialState, action) => {
     case "PARENT_ADD_FULFILLED":
       // console.log('in parent reducer >>> state', state);
       // console.log('in parent reducer >>> parent', action.payload.data.parent);
-      window.location.reload();
+      // window.location.reload();
+      console.log("parent add reducer", action.payload.data);
       return [...state, action.payload.data.parent];
     case "PARENT_ADD_REJECTED":
       return state;
@@ -24,11 +26,13 @@ export default (state = initialState, action) => {
     case "PARENT_UPDATE_FULFILLED":
       // console.log("in PARENT_UPDATE reducer >> payload:", action.payload);
       // console.log("in PARENT_UPDATE reducer >> state:", state);
-      window.location.reload();
-      let tmpArr = state.filter(
-        parent => parent._id !== action.payload.data.parent._id
-      );
-      return [...tmpArr, action.payload.data.parent];
+      var tmpArr = state;
+      for (var i = 0; i < tmpArr.length; i++) {
+        if (tmpArr[i]._id === action.payload.data.parent._id) {
+          tmpArr[i] = action.payload.data.parent;
+        }
+      }
+      return [...tmpArr];
     case "PARENT_UPDATE_REJECTED":
       return state;
 

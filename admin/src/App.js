@@ -16,13 +16,13 @@ import HouseList from "./components/HouseList";
 import HouseForm from "./components/HouseForm";
 import ParentList from "./components/ParentList";
 import ParentForm from "./components/ParentForm";
-import ParentDetail from './components/ParentDetail';
+import ParentDetail from "./components/ParentDetail";
 import Header from "./components/Header";
 import LeftNav from "./components/LeftNav";
 
 class App extends Component {
-
   componentDidMount() {
+    console.log("HErEREERERERERERERER");
     this.props.parentAction.fetchParents();
     this.props.childAction.fetchChildren();
     this.props.houseAction.fetchHouses();
@@ -31,40 +31,70 @@ class App extends Component {
   render() {
     const history = createBrowserHistory();
 
-    console.log('in App >>> state.currentUser=', this.props.currentUser);
+    console.log("in App >>> state.currentUser=", this.props.currentUser);
 
+    return (
+      <Router history={history}>
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col header-col">
+              <Header />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-2 sidebar">
+              <LeftNav />
+            </div>
+            <div className="col-md-10">
+              <Switch>
+                <Route exact path="/" component={ChildList} />
+                <Route exact path="/child" component={ChildList} />
+                <Route exact path="/child/:id" component={ChildForm} />
+                <Route exact path="/house" component={HouseList} />
+                <Route exact path="/house/:id" component={HouseForm} />
+                <Route exact path="/parent" component={ParentList} />
+                <Route exact path="/parent/:id" component={ParentForm} />
+                <Route
+                  exact
+                  path="/parentDetail/:id"
+                  component={ParentDetail}
+                />
+              </Switch>
+            </div>
+          </div>
+        </div>
+      </Router>
+    );
+    /*
     if (this.props.currentUser === null) {
-
       return (
         <Router history={history}>
           <div className="container">
             <div className="row">
-              <div className="col-md-4"></div>
+              <div className="col-md-4" />
               <div className="col-md-4">
                 <Switch>
                   <Route exact path="/" component={Login} />
                 </Switch>
               </div>
-              <div className="col-md-4"></div>
+              <div className="col-md-4" />
             </div>
           </div>
         </Router>
       );
-
     } else {
-
       if (this.props.currentUser.length === 0) {
         return (
           <Router history={history}>
             <div className="container">
               <div className="row">
-                <div className="col-md-4"></div>
+                <div className="col-md-4" />
                 <div className="col-md-4">
                   <Switch>
                     <Route exact path="/" component={Login} />
                   </Switch>
                 </div>
-                <div className="col-md-4"></div>
+                <div className="col-md-4" />
               </div>
             </div>
           </Router>
@@ -84,22 +114,27 @@ class App extends Component {
                 </div>
                 <div className="col-md-10">
                   <Switch>
-                    <Route exact path="/" component={ChildList} />
+                    <Route exact path="/" component={HouseList} />
                     <Route exact path="/child/:id" component={ChildForm} />
                     <Route exact path="/house" component={HouseList} />
                     <Route exact path="/house/:id" component={HouseForm} />
                     <Route exact path="/parent" component={ParentList} />
                     <Route exact path="/parent/:id" component={ParentForm} />
-                    <Route exact path="/parentDetail/:id" component={ParentDetail} />
+                    <Route
+                      exact
+                      path="/parentDetail/:id"
+                      component={ParentDetail}
+                    />
                   </Switch>
                 </div>
               </div>
             </div>
           </Router>
-        )
+        );
       }
     }
-
+  }
+  */
   }
 }
 

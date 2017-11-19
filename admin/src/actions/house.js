@@ -11,7 +11,7 @@ export const fetchHouses = () => {
 };
 export const addHouse = house => {
   let formdata = new FormData();
-  formdata.append("house_name", house.house_name);
+  formdata.append("house_name", house.name);
   formdata.append("address", house.address);
   return {
     type: "HOUSE_ADD",
@@ -25,10 +25,10 @@ export const addHouse = house => {
   };
 };
 
-export const updateHouse = house => {
+export const updateHouse = (id, house) => {
   let formdata = new FormData();
-  formdata.append("_id", house._id);
-  formdata.append("house_name", house.house_name);
+  formdata.append("_id", id);
+  formdata.append("house_name", house.name);
   formdata.append("address", house.address);
   return {
     type: "HOUSE_UPDATE",

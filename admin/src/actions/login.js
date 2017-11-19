@@ -3,11 +3,11 @@ import config from "../config";
 
 const API_URL = config.API_URL;
 
-export const login = (username, password) => {
+export const login = (email, password) => {
   let formdata = new FormData();
-  formdata.append("username", username);
+  formdata.append("email", email);
   formdata.append("password", password);
-  console.log('in login actions >>> formdata', formdata);
+  console.log("in login actions >>> formdata", formdata);
   return {
     type: "AUTH",
     payload: axios.post(`${API_URL}/login`, formdata, {

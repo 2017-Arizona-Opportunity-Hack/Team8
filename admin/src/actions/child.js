@@ -12,10 +12,12 @@ export const fetchChildren = () => {
 
 export const addChild = child => {
   let formdata = new FormData();
+  console.log(child.house);
   formdata.append("firstname", child.firstname);
   formdata.append("lastname", child.lastname);
   formdata.append("age", child.age);
-  formdata.append("house_id", child.house_id);
+  console.log("JSON parser", JSON.parse(child.house));
+  formdata.append("house_id", JSON.parse(child.house)._id);
   return {
     type: "CHILD_ADD",
     payload: axios.post(`${API_URL}/addChild`, formdata, {
@@ -34,7 +36,8 @@ export const updateChild = (id, child) => {
   formdata.append("firstname", child.firstname);
   formdata.append("lastname", child.lastname);
   formdata.append("age", child.age);
-  formdata.append("house_id", child.house_id);
+  console.log("JSON parser", JSON.parse(child.house));
+  formdata.append("house_id", JSON.parse(child.house)._id);
   return {
     type: "CHILD_UPDATE",
     payload: axios.post(`${API_URL}/updateChild`, formdata, {

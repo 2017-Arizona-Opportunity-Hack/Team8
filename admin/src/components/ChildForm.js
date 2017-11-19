@@ -14,18 +14,26 @@ class ChildForm extends Component {
       redirect: false
     };
   }
-  buildHouseOptions() {
+  buildHouseOptions = () => {
     return this.props.houses.map(house => (
       <HouseOption key={house._id} house={house} />
     ));
-  }
+  };
+  // <option value={val}>{props.house.name}</option>
+  // buildHouseOptions = () => {
+  //   return this.props.houses.map(house => (
+  //     <option key={house._id} val={JSON.stringify(house)}>
+  //       {house.name}
+  //     </option>
+  //   ));
+  // };
   processSubmit = values => {
     console.log("in ChildForm >>> values ", values);
     let child = {
       lastname: values.lastname,
       firstname: values.firstname,
-      age: values.age
-      // houses: values.houses
+      age: values.age,
+      house: values.house
     };
 
     if (this.props.match.params.id === "add") {
@@ -34,9 +42,11 @@ class ChildForm extends Component {
       });
     } else {
       console.log("update");
-      // this.props.parentAction.updateParent(parseInt(this.props.match.params.id, 10), parent).then(() => {
-      //   this.setState({ redirect: true });
-      // });
+      this.props.childAction
+        .updateChild(this.props.match.params.id, child)
+        .then(() => {
+          this.props.history.push("/child");
+        });
     }
   };
   render() {
@@ -101,11 +111,12 @@ class ChildForm extends Component {
                 </label>
                 <div className="col-lg-10">
                   <Field
-                    name="house_id"
+                    name="house"
                     component="select"
                     className="form-control"
                   >
                     <option />
+                    {console.log("suke", this.props)}
                     {this.buildHouseOptions()}
                   </Field>
                 </div>
@@ -128,11 +139,19 @@ class ChildForm extends Component {
     );
   }
 }
-
+function getInitialValues(state, props) {
+  var initial = props.location.state.child;
+  console.log("initial", initial.house);
+  let d = initial.house;
+  initial["housetest"] = 1;
+  initial["house"] = d;
+  return initial;
+}
 function mapStateToProps(state, props) {
   return {
     children: state.children,
-    houses: state.houses
+    houses: state.houses,
+    initialValues: props.location.state ? props.location.state.child : null
   };
 }
 
@@ -143,5 +162,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  reduxForm({ form: "client" })(ChildForm)
+  reduxForm({ form: "child" })(ChildForm)
 );

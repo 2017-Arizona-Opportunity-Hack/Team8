@@ -31,6 +31,7 @@ class ChildList extends Component {
                   <th>House</th>
                   <th>First Name</th>
                   <th>Last Name</th>
+                  <th>House</th>
                   <th>Age</th>
                   <th />
                 </tr>

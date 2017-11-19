@@ -20,14 +20,23 @@ export default (state = initialState, action) => {
     case "HOUSE_UPDATE_PENDING":
       return state;
     case "HOUSE_UPDATE_FULFILLED":
-      console.log("in HOUSE_UPDATE reducer >> ", action.payload);
-      return [...action.payload.data.all_houses];
+      console.log("Here!", state);
+      window.location.reload();
+      console.log("Here2", action.payload.data);
+      var tmpArr = state;
+      for (var i = 0; i < tmpArr.length; i++) {
+        if (tmpArr[i]._id === action.payload.data.house._id) {
+          tmpArr[i] = action.payload.data.house;
+        }
+      }
+      return [...tmpArr];
     case "HOUSE_UPDATE_REJECTED":
       return state;
 
     case "HOUSE_DELETE_PENDING":
       return state;
     case "HOUSE_DELETE_FULFILLED":
+      window.location.reload();
       return state.filter(house => {
         return house._id !== action.payload;
       });

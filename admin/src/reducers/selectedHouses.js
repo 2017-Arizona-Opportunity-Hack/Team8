@@ -1,7 +1,6 @@
 let initialState = [];
 
 export default (state = initialState, action) => {
-  console.log(action.type);
   switch (action.type) {
     case "SELECTED_HOUSES_PENDING":
       return state;

@@ -10,14 +10,17 @@ const Child = props => {
       <td>{props.child.lastname}</td>
       <td>{props.child.firstname}</td>
       <td>{props.child.age}</td>
+      <td>{JSON.parse(props.child.house).name}</td>
       <td>
         <Link
           className="btn btn-outline-info"
-          to={`/client/${props.child._id}`}
+          to={{
+            pathname: `/child/${props.child._id}`,
+            state: { child: props.child }
+          }}
         >
           <i className="fa fa-pencil" aria-hidden="true" />
-        </Link>{" "}
-        &nbsp;
+        </Link>&nbsp;
         <a
           className="btn btn-outline-danger"
           onClick={() =>

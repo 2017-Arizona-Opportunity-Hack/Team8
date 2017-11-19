@@ -1,20 +1,19 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import Parent from './Parent';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import Parent from "./Parent";
 
 class ParentList extends Component {
   getParents() {
-    return this.props.parents.map(parent =>
+    return this.props.parents.map(parent => (
       <Parent key={parent._id} parent={parent} />
-    );
+    ));
   }
 
   render() {
     // console.log('in ParentList >>> ', this.props);
     return (
       <div className="container">
-
         <div className="row">
           <div className="col btn-add">
             <Link className="btn btn-outline-info" to={`/parent/add`}>
@@ -32,26 +31,23 @@ class ParentList extends Component {
                   <th>First Name</th>
                   <th>Phone</th>
                   <th>Email</th>
-                  <th></th>
+                  <th>Houses</th>
+                  <th />
                 </tr>
               </thead>
-              <tbody>
-                { this.getParents() }
-              </tbody>
+              <tbody>{this.getParents()}</tbody>
             </table>
           </div>
         </div>
-
       </div>
     );
   }
-
 }
 
 function mapStateToProps(state, props) {
   return {
     parents: state.parents
-  }
+  };
 }
 
 export default connect(mapStateToProps, null)(ParentList);

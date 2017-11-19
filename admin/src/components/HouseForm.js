@@ -15,7 +15,7 @@ class HouseForm extends Component {
   processSubmit = values => {
     console.log("in HouseForm >>> values ", values);
     let house = {
-      house_name: values.house_name,
+      name: values.name,
       address: values.address
     };
     if (this.props.match.params.id === "add") {
@@ -24,9 +24,11 @@ class HouseForm extends Component {
       });
     } else {
       console.log("update");
-      // this.props.parentAction.updateParent(parseInt(this.props.match.params.id, 10), parent).then(() => {
-      //   this.setState({ redirect: true });
-      // });
+      this.props.houseAction
+        .updateHouse(this.props.match.params.id, house)
+        .then(() => {
+          this.props.history.push("/house");
+        });
     }
   };
   render() {
@@ -42,12 +44,12 @@ class HouseForm extends Component {
         >
           <fieldset>
             <div className="form-group">
-              <label htmlFor="house_name" className="col-lg-2 control-label">
+              <label htmlFor="name" className="col-lg-2 control-label">
                 House Name:
               </label>
               <div className="col-lg-10">
                 <Field
-                  name="house_name"
+                  name="name"
                   component="input"
                   type="text"
                   className="form-control"
@@ -58,7 +60,7 @@ class HouseForm extends Component {
             </div>
             <div className="form-group">
               <label htmlFor="address" className="col-lg-2 control-label">
-                First Name:
+                Address:
               </label>
               <div className="col-lg-10">
                 <Field
@@ -77,7 +79,7 @@ class HouseForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link to="/" className="btn btn-outline-info">
+                <Link to="/house" className="btn btn-outline-info">
                   Cancel
                 </Link>
               </div>
@@ -91,7 +93,8 @@ class HouseForm extends Component {
 
 function mapStateToProps(state, props) {
   return {
-    houses: state.houses
+    houses: state.houses,
+    initialValues: props.location.state ? props.location.state.house : null
   };
 }
 
@@ -102,5 +105,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  reduxForm({ form: "client" })(HouseForm)
+  reduxForm({ form: "house" })(HouseForm)
 );

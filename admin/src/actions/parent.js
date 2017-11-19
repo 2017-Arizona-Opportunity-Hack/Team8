@@ -17,7 +17,12 @@ export const addParent = parent => {
   formdata.append("phone", parent.phone);
   formdata.append("email", parent.email);
   formdata.append("password", parent.password);
-  formdata.append("houses", parent.houses);
+
+  var house_ids = parent.houses[0]._id;
+  for (var i = 1; i < parent.houses.length; i++) {
+    house_ids = house_ids + "," + parent.houses[i]._id;
+  }
+  formdata.append("house_ids", house_ids);
   return {
     type: "PARENT_ADD",
     payload: axios.post(`${API_URL}/addParent`, formdata, {
@@ -38,7 +43,13 @@ export const updateParent = (id, parent) => {
   formdata.append("phone", parent.phone);
   formdata.append("email", parent.email);
   formdata.append("password", parent.password);
-  formdata.append("houses", parent.houses);
+  formdata.append("password", parent.password);
+
+  var house_ids = parent.houses[0]._id;
+  for (var i = 1; i < parent.houses.length; i++) {
+    house_ids = house_ids + "," + parent.houses[i]._id;
+  }
+  formdata.append("house_ids", house_ids);
   return {
     type: "PARENT_UPDATE",
     payload: axios.post(`${API_URL}/updateParent`, formdata, {
