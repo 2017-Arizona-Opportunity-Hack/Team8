@@ -147,7 +147,7 @@ def getMedicationDetails():
     if request.method == 'POST':
         child_id = int(request.form['child_id'])
         db,client = connect_to_db()
-        med_details = db.MedicineSchedule.find({'child_id': child_id,'AdministrationTime':{'$gte': datetime.datetime.now().replace(hour=0,minute =0, second = 0,  microsecond =0), '$lte':(datetime.datetime.now()+datetime.timedelta(days=1)).replace(hour=0, second=0, minute = 0,  microsecond=0)}})
+        med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.date.today().strftime('%Y-%m-%d')})
         list1 = []
         for c in med_details:
             list1.append(c)
@@ -321,23 +321,31 @@ def getAllChildrenForHouse():
 def addMedicine():
     db,client = connect_to_db()
     try:
-        name=request.form['name']
-        reason = request.form['reason']
-        instructions = request.form['instructions']
-        pre_date = request.form['pre_date']
-        physician_name = request.form['phy_name']
-        physician_num = request.form['phy_num']
-        days = request.form['days'].split(',')
-        child_id=request.form['child_id']
-        dosage = request.form['dosage'].split(',')
-        dosage_time = request.form['dosage_time'].split(',')
+        '''
+        Purpose: Add medicine for a particular child into db in the Medicine collection
+        Inputs: medicine details and child_id
+        '''
+        print "anadar aaya main"
+        update_obj = {}
+        update_obj['medicine_name']=request.form['medicine_name']
+        update_obj['reason'] = request.form['reason']
+        update_obj['special_instructions'] = request.form['special_instructions']
+        update_obj['prescribed_date'] = request.form['prescribed_date']
+        update_obj['physician_name'] = request.form['physician_name']
+        update_obj['physician_phone'] = request.form['physician_phone']
+        update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
+        update_obj['child_id']=request.form['child_id']
+        update_obj['scheduled'] = request.form['scheduled']
+        update_obj['start_date'] = request.form['start_date']
+        update_obj['dosage'] = request.form['dosage']
+        update_obj['administration_time'] = request.form['administration_time'].split(',')   # list of times to administer medicines
+        update_obj['total_no_of_days'] = request.form['total_no_of_days']
+        print update_obj
 
-        dose_time_list = []
-
-        for i in range(len(dosage)):
-            dose_time_list.append({"dose":dosage[i],"time":dosage_time[i]})
-
-        _id = db.Medicines.insert({'name':name,'reason':reason,'instructions':instructions,'pre_date':pre_date,'physician_name':physician_name,'physician_num':physician_num,'days':days,'child_id':child_id,'dose_time':dose_time_list})
+        if db.Medicines.find({'child_id':update_obj['child_id'], 'medicine_name':update_obj['medicine_name']}).count() >0:
+            return jsonify({'success': 0, 'errorMessage': 'A prescription with this medicine name for the following child already exists.Please delete it or edit the same'})
+        else:
+            _id = db.Medicines.insert(update_obj)
 
         client.close()
         return jsonify({'success':1,'errorMessage':'','_id':str(_id)})
@@ -353,33 +361,35 @@ def addMedicine():
 def updateMedicine():
     db,client = connect_to_db()
     try:
+        update_obj = {}
         _id = request.form['_id']
-        name=request.form['name']
-        reason = request.form['reason']
-        instructions = request.form['instructions']
-        pre_date = request.form['pre_date']
-        physician_name = request.form['phy_name']
-        physician_num = request.form['phy_num']
-        days = request.form['days'].split(',')
-        child_id=request.form['child_id']
-        dosage = request.form['dosage'].split(',')
-        dosage_time = request.form['dosage_time'].split(',')
-
-        dose_time_list = []
-
-        for i in range(len(dosage)):
-            dose_time_list.append({"dose":dosage[i],"time":dosage_time[i]})
-
-        db.Medicines.find_one_and_update({'_id':ObjectId(_id)},{'$set':{'name':name,'reason':reason,'instructions':instructions,'pre_date':pre_date,'physician_name':physician_name,'physician_num':physician_num,'days':days,'child_id':child_id,'dose_time':dose_time_list}},upsert=False)
-
+        update_obj['medicine_name']=request.form['medicine_name']
+        update_obj['reason'] = request.form['reason']
+        update_obj['special_instructions'] = request.form['special_instructions']
+        update_obj['prescribed_date'] = request.form['prescribed_date']
+        update_obj['physician_name'] = request.form['physician_name']
+        update_obj['physician_phone'] = request.form['physician_phone']
+        update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
+        update_obj['child_id']=request.form['child_id']
+        update_obj['scheduled'] = request.form['scheduled']
+        update_obj['start_date'] = request.form['start_date']
+        update_obj['dosage'] = request.form['dosage']
+        update_obj['administration_time'] = request.form['administration_time'].split(',')
+        update_obj['total_no_of_days'] = request.form['total_no_of_days']
+        print update_obj
+        try:
+            db.Medicines.find_one_and_replace({'_id':ObjectId(_id)},update_obj,upsert=False)
+        except Exception as e:
+            print e
+            client.close()
+            return jsonify({'success': 0, 'errorMessage': "Couldn't find medication to update"})
         client.close()
         return jsonify({'success':1,'errorMessage':''})
 
     except Exception as e:
         print e
-
-    client.close()
-    return jsonify({'success':0,'errorMessage':'error'})
+        client.close()
+        return jsonify({'success':0,'errorMessage':'error'})
 
 @app.route('/deleteMedicine',methods=["POST"])
 @cross_origin()
@@ -393,10 +403,9 @@ def deleteMedicine():
 
     except Exception as e:
         print e
-
-    client.close()
-    return jsonify({'success':0,'errorMessage':'error'})
-
+        client.close()
+        return jsonify({'success':0,'errorMessage':'error'})
+'''
 @app.route('/addSpecialMedicine',methods=["POST"])
 @cross_origin()
 def addSpecialMedicine():
@@ -465,7 +474,7 @@ def deleteSpecialMedicine():
 
     client.close()
     return jsonify({'success':0,'errorMessage':'error'})
-
+'''
 
 @app.route('/getAllParents', methods = ["GET"])
 @cross_origin()
