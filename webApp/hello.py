@@ -145,9 +145,9 @@ def parentlogout():
 #         return jsonify(list1)
 #     return None
 
-@app.route('/getMedicationDetails', methods = ["POST"])
-def getMedicationDetails():
-    if request.method == 'POST':
+@app.route('/getMedScheduleForChild', methods = ["POST"])
+def getMedScheduleForChild():
+    try:
         child_id = int(request.form['child_id'])
         db,client = connect_to_db()
         med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.date.today().strftime('%Y-%m-%d')})
@@ -157,19 +157,25 @@ def getMedicationDetails():
         client.close()
         print list1
         return dumps(list1)
-    return None
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
+
 
 @app.route('/logMedicineGiven', methods = ["POST"])
 def logMedicineGiven():
-    if request.method == 'POST':
+    try:
         sched_id = request.form['schedule_id']
-        print sched_id
-        print type(sched_id)
         db, client = connect_to_db()
-        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':True}})
+        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':True, 'actual_time':datetime.datetime.now()}})
         client.close()
-        return "True"
-    return "False"
+        return jsonify({'success': 1, 'errorMessage': ''})
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
+
 
 @app.route('/addachild', methods = ["POST"])
 @cross_origin()
@@ -777,6 +783,7 @@ def updateHouse():
     client.close()
     return jsonify({"success":0,"errorMessage":"need post request"})
 
+'''
 @app.route('/getSchedule', methods = ["POST"])
 @cross_origin()
 def getMedSchedule():
@@ -820,6 +827,6 @@ def getMedSchedule():
                 writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven, house_visit])
 
         return "true"
-
+'''
 if __name__ == '__main__':
     app.run(debug=True)
