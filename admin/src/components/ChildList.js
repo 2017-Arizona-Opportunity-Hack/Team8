@@ -12,6 +12,7 @@ class ChildList extends Component {
 
   render() {
     console.log("in ChildList >>> ", this.props);
+    console.log("localStorage", localStorage.getItem("user"));
 
     return (
       <div className="container">
