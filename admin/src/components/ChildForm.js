@@ -128,7 +128,7 @@ class ChildForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link to="/" className="btn btn-outline-info">
+                <Link to="/child" className="btn btn-outline-info">
                   Cancel
                 </Link>
               </div>

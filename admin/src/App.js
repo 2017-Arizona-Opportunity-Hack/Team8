@@ -18,6 +18,7 @@ import ParentList from "./components/ParentList";
 import ParentForm from "./components/ParentForm";
 import ParentDetail from "./components/ParentDetail";
 import Header from "./components/Header";
+import { PrivateRoute } from "./components/PrivateRoute";
 import LeftNav from "./components/LeftNav";
 
 class App extends Component {
@@ -47,6 +48,7 @@ class App extends Component {
             </div>
             <div className="col-md-10">
               <Switch>
+
                 <Route exact path="/" component={ChildList} />
                 <Route exact path="/child" component={ChildList} />
                 <Route exact path="/child/:id" component={ChildForm} />
@@ -54,8 +56,15 @@ class App extends Component {
                 <Route exact path="/house/:id" component={HouseForm} />
                 <Route exact path="/parent" component={ParentList} />
                 <Route exact path="/parent/:id" component={ParentForm} />
-                <Route exact path="/medicine" component={ParentForm} />
-                <Route
+                <PrivateRoute exact path="/" component={ChildList} />
+                <Route exact path="/login" component={Login} />
+                <PrivateRoute exact path="/child" component={ChildList} />
+                <PrivateRoute exact path="/child/:id" component={ChildForm} />
+                <PrivateRoute exact path="/house" component={HouseList} />
+                <PrivateRoute exact path="/house/:id" component={HouseForm} />
+                <PrivateRoute exact path="/parent" component={ParentList} />
+                <PrivateRoute exact path="/parent/:id" component={ParentForm} />
+                <PrivateRoute
                   exact
                   path="/parentDetail/:id"
                   component={ParentDetail}

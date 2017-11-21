@@ -19,3 +19,14 @@ export const login = (email, password) => {
     // .catch(error => console.log(error))
   };
 };
+export const logout = () => {
+  console.log("in login actions >>> logout");
+  return {
+    type: "N_AUTH",
+    payload: new Promise((resolve, reject) => {
+      resolve({ done: 1 });
+    })
+    // .then(response => response)
+    // .catch(error => console.log(error))
+  };
+};

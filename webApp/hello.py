@@ -6,6 +6,7 @@ from bson import ObjectId
 from bson.json_util import dumps
 from flask_cors import CORS, cross_origin
 from medSched import createMedSchedule
+import pytz
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -24,16 +25,6 @@ class JSONEncoder(json.JSONEncoder):
         if isinstance(o, ObjectId):
             return str(o)
         return json.JSONEncoder.default(self, o)
-
-@app.route('/user/<username>')
-def show_user_profile(username):
-    # show the user profile for that user
-    db,client = connect_to_db()
-    datelist = db.users.find_one({'username': username}, {'timestamp':1})['timestamp']
-    datelist = reversed(datelist)
-    print datelist
-    client.close()
-    return render_template('userprofile.html', name=username, datelist = datelist)
 
 
 @app.route('/', methods = ["GET","POST"])
@@ -145,31 +136,67 @@ def parentlogout():
 #         return jsonify(list1)
 #     return None
 
-@app.route('/getMedicationDetails', methods = ["POST"])
-def getMedicationDetails():
-    if request.method == 'POST':
+@app.route('/getMedScheduleForChild', methods = ["POST"])
+def getMedScheduleForChild():
+    try:
         child_id = int(request.form['child_id'])
         db,client = connect_to_db()
-        med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.date.today().strftime('%Y-%m-%d')})
+        med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.datetime.now(pytz.timezone("America/Phoenix")).date().strftime('%Y-%m-%d')})
         list1 = []
         for c in med_details:
             list1.append(c)
         client.close()
         print list1
         return dumps(list1)
-    return None
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
+
+@app.route('/getPrescriptionForChild', methods = ["POST"])
+def getPrescriptionForChild():
+    try:
+        child_id = request.form['child_id']
+        db,client = connect_to_db()
+        med_details = db.Medicines.find({'child_id': child_id})
+        list1 = []
+        for c in med_details:
+            list1.append(c)
+        client.close()
+        print list1
+        return jsonify(list1)
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
 
 @app.route('/logMedicineGiven', methods = ["POST"])
 def logMedicineGiven():
-    if request.method == 'POST':
+    try:
         sched_id = request.form['schedule_id']
-        print sched_id
-        print type(sched_id)
         db, client = connect_to_db()
-        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':True}})
+        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':True, 'actual_time':datetime.datetime.now(pytz.timezone("America/Phoenix"))}})
         client.close()
-        return "True"
-    return "False"
+        return jsonify({'success': 1, 'errorMessage': ''})
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
+
+@app.route('/logMedicineCustom', methods = ["POST"])
+def logMedicineCustom():
+    try:
+        med_id = request.form['medicine_id']
+        db, client = connect_to_db()
+        med_details = db.Medicines.find({'_id': ObjectId(med_id)})
+
+        client.close()
+        return jsonify({'success': 1, 'errorMessage': ''})
+    except Exception as e:
+        print e
+        client.close()
+        return jsonify({'success': 0, 'errorMessage': 'error'})
+
 
 @app.route('/addachild', methods = ["POST"])
 @cross_origin()
@@ -211,16 +238,16 @@ def addChild():
     try:
         firstname = request.form['firstname']
         lastname = request.form['lastname']
-        age = int(request.form['age'])
+        dob = request.form['dob']
         house_id = request.form['house_id']
 
-        child = db.Children.find_one({'firstname':firstname,'lastname':lastname,'age':int(age),'house_id':house_id})
+        child = db.Children.find_one({'firstname':firstname,'lastname':lastname,'dob':dob,'house_id':house_id})
         if not child:
-            _id = db.Children.insert({'firstname':firstname,'lastname':lastname,'age':int(age),'house_id':house_id})
+            _id = db.Children.insert({'firstname':firstname,'lastname':lastname,'dob':dob,'house_id':house_id, 'toggle_inhouse':'True'})
             client.close()
             house = db.Houses.find_one({'_id':ObjectId(house_id)})
             house['_id'] = str(house['_id'])
-            return jsonify({'success':1,'errorMessage':'','child':{'firstname':firstname,'lastname':lastname,'age':int(age),'house':house,'_id':str(_id)}})
+            return jsonify({'success':1,'errorMessage':'','child':{'firstname':firstname,'lastname':lastname,'dob':dob,'house':house,'_id':str(_id)}})
         else:
             client.close()
             return jsonify({'success':0,'errorMessage':'already exists'})    
@@ -240,16 +267,16 @@ def updateChild():
         _id = request.form['_id']
         firstname = request.form['firstname']
         lastname = request.form['lastname']
-        age = int(request.form['age'])
+        dob = request.form['dob']
         house_id = request.form['house_id']
 
         house = db.Houses.find_one({'_id':ObjectId(house_id)})
         house['_id'] = str(house['_id'])
 
 
-        db.Children.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{'firstname':firstname,'lastname':lastname,'age':int(age),'house_id':house_id}}, upsert=False)
+        db.Children.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{'firstname':firstname,'lastname':lastname,'dob':dob,'house_id':house_id}}, upsert=False)
         client.close()
-        return jsonify({'success':1,'errorMessage':'','child':{'firstname':firstname,'lastname':lastname,'age':int(age),'house':house,'_id':str(_id)}})    
+        return jsonify({'success':1,'errorMessage':'','child':{'firstname':firstname,'lastname':lastname,'dob':dob,'house':house,'_id':str(_id)}})
     except Exception as e:
         print e
 
@@ -286,7 +313,7 @@ def getAllChildren():
             "_id":str(child['_id']),
             "firstname":child['firstname'],
             "lastname":child['lastname'],
-            "age":child['age'],
+            "dob":child['dob'],
             "house":house
             }
 
@@ -510,6 +537,7 @@ def displayAllParents():
             "lastname":parent['lastname'],
             "phone":parent['phone'],
             "email":parent['email'],
+            "userid":parent['userid'],
             'password':str(parent['password']),
             "houses":houses
             }
@@ -535,21 +563,23 @@ def addParent():
     try:
         firstname = request.form['firstname']
         lastname = request.form['lastname']
+        userid = request.form['userid']
         password = request.form['password']
         email = request.form['email']
         phone = request.form['phone']
         house_ids = request.form['house_ids'].split(",")
+        print type(house_ids)
         houses=[]
         for i in range(len(house_ids)):
             house = db.Houses.find_one({"_id":ObjectId(house_ids[i])})
             house['_id']=str(house['_id'])
             houses.append(house)
 
-        parent = db.Parents.find_one({"email":email})
+        parent = db.Parents.find_one({"userid":userid})
         if not parent:
-            _id = db.Parents.insert({"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"house_ids": house_ids,"phone": phone})
+            _id = db.Parents.insert({"firstname":firstname,"lastname": lastname,"password": password,"email": email,"house_ids": house_ids,"phone": phone,"userid":userid})
             client.close()
-            return jsonify({'success':1,'errorMessage':'','parent':{"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"houses": houses,"phone": phone,'_id':str(_id)}})
+            return jsonify({'success':1,'errorMessage':'','parent':{"firstname":firstname,"lastname": lastname,"password": password,"email": email,"houses": houses,"phone": phone,'_id':str(_id),"userid":userid}})
 
         else:
             return jsonify({'success':0,'errorMessage':'already exists'})
@@ -569,6 +599,7 @@ def editParent():
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         password = request.form['password']
+        userid = request.form['userid']
         email = request.form['email']
         phone = request.form['phone']
         house_ids = request.form['house_ids'].split(",")
@@ -578,9 +609,9 @@ def editParent():
             house['_id']=str(house['_id'])
             houses.append(house)
 
-        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"house_ids": house_ids,"phone": phone}}, upsert=False)
+        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"firstname":firstname,"lastname": lastname,"userid": userid,"password": str(password),"email": email,"house_ids": house_ids,"phone": phone}}, upsert=False)
         client.close()
-        return jsonify({'success':1,'errorMessage':'','parent':{"_id":_id,"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"houses": houses,"phone": phone}})
+        return jsonify({'success':1,'errorMessage':'','parent':{"_id":_id,"firstname":firstname,"lastname": lastname, "userid": userid,"password": str(password),"email": email,"houses": houses,"phone": phone}})
     except Exception as e:
         print e
 
@@ -632,21 +663,45 @@ def getAllHousesForParent():
 
 
 
+
 #mobileapp toggle
 @app.route('/togglechild', methods = ["POST"])
 def togglechild():
-    if request.method == 'POST':
-        child_id = int(request.form['child_id'])
-        db, client = connect_to_db()
+    try:
+        if request.method == 'POST':
+            child_id = request.form['child_id']
+            db, client = connect_to_db()
+            todays_date = datetime.datetime.now(pytz.timezone("America/Phoenix")).date()
+            toggle_child = db.Children.find_one({"child_id":child_id },{"_id":0,"toggle_inhouse":1})
+            print type(toggle_child['toggle_inhouse'])
+            new_state = not(toggle_child['toggle_inhouse'])
+            db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse': new_state }})
 
-        toggle_child = db.Children.find({"child_id":child_id },{"_id":0,"toggle_inhouse":1})[0]
+            if new_state is True:
+                db.ChildStatus.find_one_and_update({'child_id': child_id}, {'$set':{'in_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))}} ,sort={'_id':-1})
 
-        toggle_child['toggle_inhouse'] = not(toggle_child['toggle_inhouse'])
-        db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse':toggle_child['toggle_inhouse'] }})
+                if datetime.datetime.now(pytz.timezone("America/Phoenix")).time() < datetime.time(6,0,0,0):
+                    db.MedicineSchedule.update(
+                        {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A'},
+                        {'$set': {'done': 'False'}})
+                elif datetime.datetime.now(pytz.timezone("America/Phoenix")).time() > datetime.time(18,0,0,0):
+                    db.MedicineSchedule.update(
+                        {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A', 'administration_time':{'$in':['Evening','Night']}},
+                        {'$set': {'done': 'False'}})
+
+            elif new_state is False:
+                #went out of house
+                db.ChildStatus.insert({'child_id': child_id, 'out_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))})
+                db.MedicineSchedule.update(
+                    {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'False'},
+                    {'$set': {'done': 'N/A'}})
+
+            client.close()
+            return jsonify({"success":1,"errorMessage":""})
+    except Exception as e:
+        print e
         client.close()
-        createMedSchedule()
-        return "True"
-    return "False"
+        return jsonify({"success":0,"errorMessage":"error"})
 
 @app.route('/addHouse', methods = ["POST"])
 @cross_origin()
@@ -659,9 +714,8 @@ def addHouse():
 
         house = db.Houses.find_one({"name":name})       
         if not house:
-            max_id = db.Houses.find().sort([('house_id', -1)]).limit(1)[0]["house_id"]
-            _id = db.Houses.insert({"name":name,"address": address,"house_id":max_id+1})
-            returnObject = {"success":1,"errorMessage":"",'house':{"name":name,"address": address,"house_id":max_id+1,'_id':str(_id)}}
+            _id = db.Houses.insert({"name":name,"address": address})
+            returnObject = {"success":1,"errorMessage":"",'house':{"name":name,"address": address,'_id':str(_id)}}
             client.close()
             return jsonify(returnObject)
         else:
@@ -671,7 +725,6 @@ def addHouse():
 
     except Exception as e:
         print e
-
 
     client.close()
     return jsonify({"success":0,"errorMessage":"error"})
@@ -686,12 +739,10 @@ def getAllHouses():
         all_houses = []
         for house in houses:
             house_object={
-            "house_id":house['house_id'],
             "name":house['name'],
             "address":house['address'],
             "_id":str(house['_id'])
             }
-
             all_houses.append(house_object)
         client.close()
         return jsonify({'all_houses':all_houses,'success':1,'errorMessage':''})
@@ -709,8 +760,8 @@ def deleteHouse():
     try:
         _id = request.form['_id']
         child = db.Children.find_one({"house_id":_id})
-        parent = db.Parents.find_one({"house_id":_id})
-        if not child or not parent:
+        parent = db.Parents.find_one({"house_ids":_id})
+        if not child and not parent:
             db.Houses.delete_one({"_id": ObjectId(_id)})
             client.close()
             return jsonify({"success":1,"errorMessage":""})
@@ -733,18 +784,18 @@ def deleteHouseConfirm():
         _id = request.form['_id']
 
         child = db.Children.find_one({"house_id":_id})
-        parent = db.Parents.find_one({"house_id":_id})
+        parent = db.Parents.find_one({"house_ids":_id})
 
         if child:
             print "Yes"
             db.Children.update_many({"house_id":_id},{'$set':{'house_id':''}})
         if parent:
             print "No"
-            parents =   db.Parents.find({"house_id":_id})
+            parents =   db.Parents.find({"house_ids":_id})
             for parent in parents:
-                list_house = parent['house_id']
+                list_house = parent['house_ids']
                 list_house.remove(_id)
-                db.Parents.find_one_and_update({'_id':parent['_id']},{'$set':{'house_id':list_house,'password':1234}})
+                db.Parents.find_one_and_update({'_id':parent['_id']},{'$set':{'house_ids':list_house}})
 
        
         db.Houses.delete_one({"_id": ObjectId(_id)})
@@ -777,6 +828,7 @@ def updateHouse():
     client.close()
     return jsonify({"success":0,"errorMessage":"need post request"})
 
+'''
 @app.route('/getSchedule', methods = ["POST"])
 @cross_origin()
 def getMedSchedule():
@@ -820,6 +872,6 @@ def getMedSchedule():
                 writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven, house_visit])
 
         return "true"
-
+'''
 if __name__ == '__main__':
     app.run(debug=True)
