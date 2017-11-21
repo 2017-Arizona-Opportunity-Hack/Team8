@@ -22,7 +22,10 @@
     "webpack": "^3.8.1"
   },
   "babel": {
-    "presets": ["es2015", "react"]
+    "presets": [
+      "es2015",
+      "react"
+    ]
   },
   "scripts": {
     "start": "react-scripts start",

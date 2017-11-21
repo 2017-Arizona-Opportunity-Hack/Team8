@@ -52,6 +52,14 @@ class App extends Component {
             )}
             <div className="col-md-10">
               <Switch>
+
+                <Route exact path="/" component={ChildList} />
+                <Route exact path="/child" component={ChildList} />
+                <Route exact path="/child/:id" component={ChildForm} />
+                <Route exact path="/house" component={HouseList} />
+                <Route exact path="/house/:id" component={HouseForm} />
+                <Route exact path="/parent" component={ParentList} />
+                <Route exact path="/parent/:id" component={ParentForm} />
                 <PrivateRoute exact path="/" component={ChildList} />
                 {!localStorage.getItem("user") && (
                   <Route path="/login" component={Login} />
