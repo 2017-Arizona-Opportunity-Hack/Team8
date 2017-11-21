@@ -12,7 +12,8 @@ class LeftNav extends Component {
   handleLogout() {
     console.log("in LeftNav >>> logout", this.props);
     this.props.authAction.logout().then(() => {
-      this.props.history.push("/login");
+      window.location.reload();
+      // this.props.history.push("/login");
     });
   }
 
@@ -33,7 +34,9 @@ class LeftNav extends Component {
             <Link to="/parent">Parents</Link>
           </li>
           <li>
-            <a onClick={this.handleLogout.bind(this)}>Logout</a>
+            <a className="a" onClick={this.handleLogout.bind(this)}>
+              Logout
+            </a>
           </li>
         </ul>
       </div>

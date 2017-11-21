@@ -38,18 +38,24 @@ class App extends Component {
       <Router history={history}>
         <div className="container-fluid">
           <div className="row">
-            <div className="col header-col">
-              <Header />
-            </div>
+            {localStorage.getItem("user") && (
+              <div className="col header-col">
+                <Header />
+              </div>
+            )}
           </div>
           <div className="row">
-            <div className="col-md-2 sidebar">
-              <LeftNav />
-            </div>
+            {localStorage.getItem("user") && (
+              <div className="col-md-2 sidebar">
+                <LeftNav />
+              </div>
+            )}
             <div className="col-md-10">
               <Switch>
                 <PrivateRoute exact path="/" component={ChildList} />
-                <Route exact path="/login" component={Login} />
+                {!localStorage.getItem("user") && (
+                  <Route path="/login" component={Login} />
+                )}
                 <PrivateRoute exact path="/child" component={ChildList} />
                 <PrivateRoute exact path="/child/:id" component={ChildForm} />
                 <PrivateRoute exact path="/house" component={HouseList} />

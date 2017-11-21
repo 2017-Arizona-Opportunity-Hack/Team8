@@ -9,10 +9,10 @@ export default (state = initialState, action) => {
       if (action.payload.data.success === 1) {
         console.log("in login reducer >>> login success", action.payload.data);
         localStorage.setItem("user", JSON.stringify(action.payload.data));
-        return state;
+        return action.payload.data;
       } else {
         console.log("in login reducer >>> login failed");
-        return null;
+        return action.payload.data;
       }
     case "AUTH_REJECTED":
       return state;
