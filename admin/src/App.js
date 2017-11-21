@@ -54,6 +54,7 @@ class App extends Component {
                 <Route exact path="/house/:id" component={HouseForm} />
                 <Route exact path="/parent" component={ParentList} />
                 <Route exact path="/parent/:id" component={ParentForm} />
+                <Route exact path="/medicine" component={ParentForm} />
                 <Route
                   exact
                   path="/parentDetail/:id"
