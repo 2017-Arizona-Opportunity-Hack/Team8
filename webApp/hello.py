@@ -139,15 +139,16 @@ def parentlogout():
 @app.route('/getMedScheduleForChild', methods = ["POST"])
 def getMedScheduleForChild():
     try:
-        child_id = int(request.form['child_id'])
+        child_id = request.form['child_id']
         db,client = connect_to_db()
         med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.datetime.now(pytz.timezone("America/Phoenix")).date().strftime('%Y-%m-%d')})
         list1 = []
         for c in med_details:
+            c['_id'] = str(c['_id'])
             list1.append(c)
         client.close()
         print list1
-        return dumps(list1)
+        return jsonify(list1)
     except Exception as e:
         print e
         client.close()
@@ -161,6 +162,7 @@ def getPrescriptionForChild():
         med_details = db.Medicines.find({'child_id': child_id})
         list1 = []
         for c in med_details:
+            c['_id'] = str(c['_id'])
             list1.append(c)
         client.close()
         print list1
@@ -175,7 +177,7 @@ def logMedicineGiven():
     try:
         sched_id = request.form['schedule_id']
         db, client = connect_to_db()
-        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':True, 'actual_time':datetime.datetime.now(pytz.timezone("America/Phoenix"))}})
+        med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':'True', 'actual_time':datetime.datetime.now(pytz.timezone("America/Phoenix"))}})
         client.close()
         return jsonify({'success': 1, 'errorMessage': ''})
     except Exception as e:
@@ -188,8 +190,25 @@ def logMedicineCustom():
     try:
         med_id = request.form['medicine_id']
         db, client = connect_to_db()
-        med_details = db.Medicines.find({'_id': ObjectId(med_id)})
-
+        medication = db.Medicines.find_one({'_id': ObjectId(med_id)})
+        child = db.Children.find_one({'_id':ObjectId(medication['child_id'])})
+        todays_date = datetime.datetime.now(pytz.timezone("America/Phoenix")).date()
+        schedule_row_object = {}
+        schedule_row_object['date'] = todays_date.strftime('%Y-%m-%d')
+        schedule_row_object['actual_time'] = datetime.datetime.now(pytz.timezone("America/Phoenix"))
+        schedule_row_object['child_name'] = child['firstname'] + child['lastname']
+        schedule_row_object['house_id'] = child['house_id']
+        schedule_row_object['child_id'] = str(child['_id'])
+        schedule_row_object['medicine_name'] = medication['medicine_name']
+        schedule_row_object['reason'] = medication['reason']
+        schedule_row_object['physician_phone'] = medication['physician_phone']
+        schedule_row_object['special_instructions'] = medication['special_instructions']
+        schedule_row_object['dosage'] = medication['dosage']
+        schedule_row_object['prescribed_date'] = medication['prescribed_date']
+        schedule_row_object['physician_name'] = medication['physician_name']
+        schedule_row_object['done'] = 'True'
+        #doesnt have an administration time, differentiating factor from normal logged medicines
+        db.MedicineSchedule.insert_one(schedule_row_object)
         client.close()
         return jsonify({'success': 1, 'errorMessage': ''})
     except Exception as e:
@@ -371,13 +390,16 @@ def addMedicine():
         update_obj['prescribed_date'] = request.form['prescribed_date']
         update_obj['physician_name'] = request.form['physician_name']
         update_obj['physician_phone'] = request.form['physician_phone']
-        update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
-        update_obj['child_id']=request.form['child_id']
         update_obj['scheduled'] = request.form['scheduled']
-        update_obj['start_date'] = request.form['start_date']
+        update_obj['child_id'] = request.form['child_id']
         update_obj['dosage'] = request.form['dosage']
-        update_obj['administration_time'] = request.form['administration_time'].split(',')   # list of times to administer medicines
-        update_obj['total_no_of_days'] = request.form['total_no_of_days']
+
+        if update_obj['scheduled'] == 'True':
+            update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
+            update_obj['start_date'] = request.form['start_date']
+            update_obj['administration_time'] = request.form['administration_time'].split(',')
+            update_obj['total_no_of_days'] = request.form['total_no_of_days']
+
         print update_obj
 
         if db.Medicines.find({'child_id':update_obj['child_id'], 'medicine_name':update_obj['medicine_name']}).count() >0:
@@ -674,10 +696,14 @@ def togglechild():
             todays_date = datetime.datetime.now(pytz.timezone("America/Phoenix")).date()
             toggle_child = db.Children.find_one({"child_id":child_id },{"_id":0,"toggle_inhouse":1})
             print type(toggle_child['toggle_inhouse'])
-            new_state = not(toggle_child['toggle_inhouse'])
+            if toggle_child['toggle_inhouse'] =='True':
+                new_state = 'False'
+            elif toggle_child['toggle_inhouse'] =='False':
+                new_state = 'True'
+
             db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse': new_state }})
 
-            if new_state is True:
+            if new_state == 'True':
                 db.ChildStatus.find_one_and_update({'child_id': child_id}, {'$set':{'in_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))}} ,sort={'_id':-1})
 
                 if datetime.datetime.now(pytz.timezone("America/Phoenix")).time() < datetime.time(6,0,0,0):
@@ -689,7 +715,7 @@ def togglechild():
                         {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A', 'administration_time':{'$in':['Evening','Night']}},
                         {'$set': {'done': 'False'}})
 
-            elif new_state is False:
+            elif new_state == 'False':
                 #went out of house
                 db.ChildStatus.insert({'child_id': child_id, 'out_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))})
                 db.MedicineSchedule.update(
