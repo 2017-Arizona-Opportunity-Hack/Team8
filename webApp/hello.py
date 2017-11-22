@@ -694,31 +694,30 @@ def togglechild():
             child_id = request.form['child_id']
             db, client = connect_to_db()
             todays_date = datetime.datetime.now(pytz.timezone("America/Phoenix")).date()
-            toggle_child = db.Children.find_one({"child_id":child_id },{"_id":0,"toggle_inhouse":1})
-            print type(toggle_child['toggle_inhouse'])
+            toggle_child = db.Children.find_one({"_id":ObjectId(child_id) },{"_id":0,"toggle_inhouse":1})
             if toggle_child['toggle_inhouse'] =='True':
                 new_state = 'False'
             elif toggle_child['toggle_inhouse'] =='False':
                 new_state = 'True'
 
-            db.Children.find_one_and_update({"child_id":child_id },{'$set':{'toggle_inhouse': new_state }})
+            db.Children.find_one_and_update({"_id":ObjectId(child_id) },{'$set':{'toggle_inhouse': new_state }})
 
             if new_state == 'True':
-                db.ChildStatus.find_one_and_update({'child_id': child_id}, {'$set':{'in_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))}} ,sort={'_id':-1})
+                db.ChildStatus.find_one_and_update({'child_id': child_id}, {'$set':{'in_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))}} ,sort=[('_id',-1)])
 
                 if datetime.datetime.now(pytz.timezone("America/Phoenix")).time() < datetime.time(6,0,0,0):
-                    db.MedicineSchedule.update(
+                    db.MedicineSchedule.update_many(
                         {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A'},
                         {'$set': {'done': 'False'}})
                 elif datetime.datetime.now(pytz.timezone("America/Phoenix")).time() > datetime.time(18,0,0,0):
-                    db.MedicineSchedule.update(
+                    db.MedicineSchedule.update_many(
                         {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A', 'administration_time':{'$in':['Evening','Night']}},
                         {'$set': {'done': 'False'}})
 
             elif new_state == 'False':
                 #went out of house
                 db.ChildStatus.insert({'child_id': child_id, 'out_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))})
-                db.MedicineSchedule.update(
+                db.MedicineSchedule.update_many(
                     {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'False'},
                     {'$set': {'done': 'N/A'}})
 
