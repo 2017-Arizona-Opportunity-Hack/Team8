@@ -166,7 +166,7 @@ def getPrescriptionForChild():
             list1.append(c)
         client.close()
         print list1
-        return jsonify(list1)
+        return jsonify({'success': 1, 'errorMessage': '', 'all_medicines':list1})
     except Exception as e:
         print e
         client.close()
@@ -559,7 +559,7 @@ def displayAllParents():
             "lastname":parent['lastname'],
             "phone":parent['phone'],
             "email":parent['email'],
-            "userid":parent['userid'],
+            #"userid":parent['userid'],
             'password':str(parent['password']),
             "houses":houses
             }
@@ -585,7 +585,7 @@ def addParent():
     try:
         firstname = request.form['firstname']
         lastname = request.form['lastname']
-        userid = request.form['userid']
+        #userid = request.form['userid']
         password = request.form['password']
         email = request.form['email']
         phone = request.form['phone']
@@ -597,11 +597,11 @@ def addParent():
             house['_id']=str(house['_id'])
             houses.append(house)
 
-        parent = db.Parents.find_one({"userid":userid})
+        parent = db.Parents.find_one({"email":email})
         if not parent:
-            _id = db.Parents.insert({"firstname":firstname,"lastname": lastname,"password": password,"email": email,"house_ids": house_ids,"phone": phone,"userid":userid})
+            _id = db.Parents.insert({"firstname":firstname,"lastname": lastname,"password": password,"email": email,"house_ids": house_ids,"phone": phone})
             client.close()
-            return jsonify({'success':1,'errorMessage':'','parent':{"firstname":firstname,"lastname": lastname,"password": password,"email": email,"houses": houses,"phone": phone,'_id':str(_id),"userid":userid}})
+            return jsonify({'success':1,'errorMessage':'','parent':{"firstname":firstname,"lastname": lastname,"password": password,"email": email,"houses": houses,"phone": phone,'_id':str(_id)}})
 
         else:
             return jsonify({'success':0,'errorMessage':'already exists'})
@@ -621,7 +621,7 @@ def editParent():
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         password = request.form['password']
-        userid = request.form['userid']
+        #userid = request.form['userid']
         email = request.form['email']
         phone = request.form['phone']
         house_ids = request.form['house_ids'].split(",")
@@ -631,9 +631,9 @@ def editParent():
             house['_id']=str(house['_id'])
             houses.append(house)
 
-        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"firstname":firstname,"lastname": lastname,"userid": userid,"password": str(password),"email": email,"house_ids": house_ids,"phone": phone}}, upsert=False)
+        db.Parents.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"house_ids": house_ids,"phone": phone}}, upsert=False)
         client.close()
-        return jsonify({'success':1,'errorMessage':'','parent':{"_id":_id,"firstname":firstname,"lastname": lastname, "userid": userid,"password": str(password),"email": email,"houses": houses,"phone": phone}})
+        return jsonify({'success':1,'errorMessage':'','parent':{"_id":_id,"firstname":firstname,"lastname": lastname,"password": str(password),"email": email,"houses": houses,"phone": phone}})
     except Exception as e:
         print e
 
