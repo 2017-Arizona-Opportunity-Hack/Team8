@@ -29,7 +29,6 @@ class ChildList extends Component {
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>House</th>
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>House</th>

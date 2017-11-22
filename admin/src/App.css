@@ -1,5 +1,5 @@
 body {
-	font-weight: 200;
+  font-weight: 200;
   font-size: 16px;
 }
 
@@ -8,12 +8,14 @@ a {
   text-decoration: none;
 }
 
-a:focus, a:hover {
+a:focus,
+a:hover {
   font-weight: bold;
   color: white;
   text-decoration: none;
 }
-
+.table-row {
+}
 .list {
   color: #fff;
   list-style: none;
@@ -21,7 +23,7 @@ a:focus, a:hover {
 }
 
 .header {
-  background-color: #E8E6E4;
+  background-color: #e8e6e4;
 }
 
 .header-col {
@@ -36,7 +38,7 @@ a:focus, a:hover {
 .sidebar {
   padding-top: 20px;
   color: white;
-  background-color: #F36D0F;
+  background-color: #f36d0f;
   min-height: 100vh;
 }
 
@@ -45,7 +47,7 @@ a:focus, a:hover {
 }
 
 .btn-house {
-	margin-right: 5px;
+  margin-right: 5px;
 }
 
 .view-link {
@@ -57,12 +59,12 @@ a:focus, a:hover {
 .card-container.card {
   max-width: 350px;
   padding: 40px 40px;
-	background-color: #FAF9FC;
+  background-color: #faf9fc;
 }
 
 .profile-img {
-	margin-top: 50px;
-	margin-bottom: 100px;
+  margin-top: 50px;
+  margin-bottom: 100px;
 }
 
 .spacer {

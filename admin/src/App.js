@@ -16,8 +16,10 @@ import HouseList from "./components/HouseList";
 import HouseForm from "./components/HouseForm";
 import ParentList from "./components/ParentList";
 import ParentForm from "./components/ParentForm";
+import MedicineForm from "./components/medicineForm";
 import ParentDetail from "./components/ParentDetail";
 import Header from "./components/Header";
+import MedicineList from "./components/MedicineList";
 import { PrivateRoute } from "./components/PrivateRoute";
 import LeftNav from "./components/LeftNav";
 
@@ -52,20 +54,21 @@ class App extends Component {
             )}
             <div className="col-md-10">
               <Switch>
-
-                <Route exact path="/" component={ChildList} />
-                <Route exact path="/child" component={ChildList} />
-                <Route exact path="/child/:id" component={ChildForm} />
-                <Route exact path="/house" component={HouseList} />
-                <Route exact path="/house/:id" component={HouseForm} />
-                <Route exact path="/parent" component={ParentList} />
-                <Route exact path="/parent/:id" component={ParentForm} />
                 <PrivateRoute exact path="/" component={ChildList} />
                 {!localStorage.getItem("user") && (
                   <Route path="/login" component={Login} />
                 )}
                 <PrivateRoute exact path="/child" component={ChildList} />
                 <PrivateRoute exact path="/child/:id" component={ChildForm} />
+                <PrivateRoute
+                  exact
+                  path="/child/:id/medicines"
+                  component={MedicineList}
+                />
+                <PrivateRoute
+                  path="/child/:id/medicine"
+                  component={MedicineForm}
+                />
                 <PrivateRoute exact path="/house" component={HouseList} />
                 <PrivateRoute exact path="/house/:id" component={HouseForm} />
                 <PrivateRoute exact path="/parent" component={ParentList} />

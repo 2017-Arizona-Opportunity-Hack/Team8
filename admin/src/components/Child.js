@@ -9,9 +9,18 @@ const Child = props => {
     <tr>
       <td>{props.child.lastname}</td>
       <td>{props.child.firstname}</td>
-      <td>{props.child.age}</td>
       <td>{JSON.parse(props.child.house).name}</td>
+      <td>{props.child.age}</td>
       <td>
+        <Link
+          className="btn btn-outline-info"
+          to={{
+            pathname: `/child/${props.child._id}/medicines`,
+            state: { child: props.child }
+          }}
+        >
+          <i className="fa fa-medkit" aria-hidden="true" />
+        </Link>&nbsp;
         <Link
           className="btn btn-outline-info"
           to={{
