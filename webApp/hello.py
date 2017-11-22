@@ -1,5 +1,5 @@
 from flask import Flask, session, redirect, url_for, escape, request, render_template, jsonify
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 import datetime
 import json
 from bson import ObjectId
@@ -400,15 +400,17 @@ def addMedicine():
             update_obj['administration_time'] = request.form['administration_time'].split(',')
             update_obj['total_no_of_days'] = request.form['total_no_of_days']
 
-        print update_obj
+        #print update_obj
 
         if db.Medicines.find({'child_id':update_obj['child_id'], 'medicine_name':update_obj['medicine_name']}).count() >0:
             return jsonify({'success': 0, 'errorMessage': 'A prescription with this medicine name for the following child already exists.Please delete it or edit the same'})
         else:
             _id = db.Medicines.insert(update_obj)
+        print _id
+        update_obj['_id'] = str(_id)
 
         client.close()
-        return jsonify({'success':1,'errorMessage':'','_id':str(_id)})
+        return jsonify({'success':1,'errorMessage':'','medicine':update_obj})
 
     except Exception as e:
         print e
@@ -438,13 +440,14 @@ def updateMedicine():
         update_obj['total_no_of_days'] = request.form['total_no_of_days']
         print update_obj
         try:
-            db.Medicines.find_one_and_replace({'_id':ObjectId(_id)},update_obj,upsert=False)
+            return_obj = db.Medicines.find_one_and_replace({'_id':ObjectId(_id)},update_obj,upsert=False, return_document=ReturnDocument.AFTER)
+            return_obj['_id'] = str(return_obj['_id'])
         except Exception as e:
             print e
             client.close()
             return jsonify({'success': 0, 'errorMessage': "Couldn't find medication to update"})
         client.close()
-        return jsonify({'success':1,'errorMessage':''})
+        return jsonify({'success':1,'errorMessage':'', 'medicine':return_obj})
 
     except Exception as e:
         print e
