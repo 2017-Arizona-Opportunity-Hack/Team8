@@ -431,13 +431,15 @@ def updateMedicine():
         update_obj['prescribed_date'] = request.form['prescribed_date']
         update_obj['physician_name'] = request.form['physician_name']
         update_obj['physician_phone'] = request.form['physician_phone']
-        update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
         update_obj['child_id']=request.form['child_id']
         update_obj['scheduled'] = request.form['scheduled']
-        update_obj['start_date'] = request.form['start_date']
         update_obj['dosage'] = request.form['dosage']
-        update_obj['administration_time'] = request.form['administration_time'].split(',')
-        update_obj['total_no_of_days'] = request.form['total_no_of_days']
+        if update_obj['scheduled'] == 'True':
+            update_obj['days_of_week'] = list(map(lambda x: int(x), request.form['days_of_week'].split(',')))
+            update_obj['start_date'] = request.form['start_date']
+            update_obj['administration_time'] = request.form['administration_time'].split(',')
+            update_obj['total_no_of_days'] = request.form['total_no_of_days']
+
         print update_obj
         try:
             return_obj = db.Medicines.find_one_and_replace({'_id':ObjectId(_id)},update_obj,upsert=False, return_document=ReturnDocument.AFTER)
