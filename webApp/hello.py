@@ -718,6 +718,11 @@ def togglechild():
                     db.MedicineSchedule.update_many(
                         {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A', 'administration_time':{'$in':['Evening','Night']}},
                         {'$set': {'done': 'False'}})
+                else:
+                    #behaviour currently same as first if but scope of change present in thr future
+                    db.MedicineSchedule.update_many(
+                        {'child_id': child_id, 'date': todays_date.strftime('%Y-%m-%d'), 'done': 'N/A'},
+                        {'$set': {'done': 'False'}})
 
             elif new_state == 'False':
                 #went out of house
