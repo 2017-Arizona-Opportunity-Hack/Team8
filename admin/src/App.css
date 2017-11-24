@@ -54,6 +54,12 @@ a:hover {
   color: inherit;
 }
 
+/* Start Form Styles */
+.errorMsg {
+  color: red;
+}
+/* End Form Styles */
+
 /* Start Login Form Styles */
 
 .card-container.card {

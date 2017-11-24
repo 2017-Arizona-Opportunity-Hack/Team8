@@ -8,7 +8,26 @@ import * as parentAction from "../actions/parent";
 import * as selectedHousesAction from "../actions/selectedHouses";
 
 import HouseOption from "./HouseOption";
-import HouseButton from "./HouseButton";
+// import HouseButton from "./HouseButton";
+
+const required = value => value ? undefined : 'This field is required';
+
+const renderField = ({
+  input,
+  label,
+  placeholder,
+  className,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <label>{label}</label>
+    <div>
+      <input {...input} placeholder={placeholder} type={type} className={className} />
+      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+)
 
 const renderHouses = ({
   fields,
@@ -21,10 +40,13 @@ const renderHouses = ({
       component="select"
       onChange={e => fields.push(JSON.parse(e.target.value))}
       className="form-control"
+      validate={[ required ]}
     >
       <option />
       {buildHouseOptions()}
     </Field>
+    {touched && error && <span className="errorMsg">{error}</span>}
+    <br />
     <div className="form-group" name="houses">
       Selected houses:<br />
       {fields.map((house, index) => (
@@ -44,10 +66,8 @@ const renderHouses = ({
     </div>
   </div>
 );
-const ParentForm = props => {
-  console.log("in ParentForm >>> props ", props);
 
-  const array = [];
+const ParentForm = props => {
 
   const buildHouseOptions = () => {
     return props.houses.map(house => (
@@ -55,35 +75,7 @@ const ParentForm = props => {
     ));
   };
 
-  const buildHouseButtons = values => {
-    console.log("in buildHouseButtons >>> selectedHouses ", props);
-    console.log("in buildHousesButton house select");
-
-    if (props.initialValues) {
-      return props.initialValues.houses.map((house, i) => (
-        <HouseButton
-          key={i}
-          house={house}
-          selectedHousesAction={selectedHousesAction}
-        />
-      ));
-    } else return;
-  };
-
-  const handleChange = e => {
-    console.log("in handleChange >>> value=", e.target.value);
-    var house = JSON.parse(e.target.value);
-    array.push(house);
-    // props.initialValues.houses.push(house);
-  };
-
   const processSubmit = values => {
-    console.log("Extreme Values", values);
-    // console.log('in processSubmit >>> props', props);
-    // let houseIds = [];
-    // props.selectedHouses.forEach(house =>
-    //   houseIds.push({ _id: house._id, name: house.name })
-    // );
     let parent = {
       lastname: values.lastname,
       firstname: values.firstname,
@@ -92,15 +84,11 @@ const ParentForm = props => {
       password: values.password,
       houses: values.houses
     };
-    // console.log("in processSubmit >>> parent", parent);
-    //
     if (props.match.params.id === "add") {
-      console.log("add");
       props.parentAction.addParent(parent).then(() => {
         props.history.push("/parent");
       });
     } else {
-      console.log("update");
       props.parentAction
         .updateParent(props.match.params.id, parent)
         .then(() => {
@@ -131,76 +119,66 @@ const ParentForm = props => {
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="lastname" className="col-lg-2 control-label">
-              Last Name:
-            </label>
             <div className="col-lg-10">
               <Field
                 name="lastname"
-                component="input"
                 type="text"
+                component={renderField}
+                label="Last Name:"
                 className="form-control"
                 placeholder="Enter the last name"
-                autoComplete="off"
+                validate={[ required ]}
               />
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="firstname" className="col-lg-2 control-label">
-              First Name:
-            </label>
             <div className="col-lg-10">
               <Field
                 name="firstname"
-                component="input"
+                component={renderField}
+                label="First Name:"
                 type="text"
                 className="form-control"
                 placeholder="Enter the first name"
-                autoComplete="off"
+                validate={[ required ]}
               />
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="phone" className="col-lg-2 control-label">
-              Phone:
-            </label>
             <div className="col-lg-10">
               <Field
                 name="phone"
-                component="input"
+                component={renderField}
+                label="Phone Number:"
                 type="text"
                 className="form-control"
                 placeholder="Enter the phone"
-                autoComplete="off"
+                validate={[ required ]}
               />
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="email" className="col-lg-2 control-label">
-              Email:
-            </label>
             <div className="col-lg-10">
               <Field
                 name="email"
-                component="input"
+                component={renderField}
+                label="Email Address:"
                 type="text"
                 className="form-control"
                 placeholder="Enter the email"
-                autoComplete="off"
+                validate={[ required ]}
               />
             </div>
           </div>
           <div className="form-group">
-            <label htmlFor="password" className="col-lg-2 control-label">
-              Password:
-            </label>
             <div className="col-lg-10">
               <Field
                 name="password"
-                component="input"
+                component={renderField}
+                label="Password:"
                 type="text"
                 className="form-control"
-                autoComplete="off"
+                validate={[ required ]}
               />
             </div>
           </div>
@@ -221,37 +199,7 @@ const ParentForm = props => {
     </div>
   );
 };
-/*function generateInitialHouses(props, state) {
-  if (state.selectedHouses.length === 0) {
-    console.log("State");
-    if (props.location.state) {
-      console.log("boolean");
-      var parent = props.location.state.parent;
 
-      var house_id = parent["house_id"];
-      var houses = [];
-      for (var i = 0; i < house_id.length; i++) {
-        var id = house_id[i];
-        for (var j = 0; j < state.houses.length; j++) {
-          if (state.houses[j]["_id"] === id) {
-            houses.push(state.houses[j]);
-          }
-        }
-      }
-      state.selectedHouses = houses;
-      return state.selectedHouses;
-    } else {
-      // state.selectedHouses = [];
-      return state.selectedHouses;
-    }
-  } else {
-    if (props.match.params.id === "add") {
-      state.selectedHouses = [];
-    }
-    return state.selectedHouses;
-  }
-}
-*/
 function mapStateToProps(state, props) {
   return {
     children: state.children,
