@@ -7,8 +7,7 @@ const ParentDetail = props => {
     lastname,
     email,
     houses,
-    phone,
-    house_id
+    phone
   } = props.location.state.parent;
   return (
     <div className="container">

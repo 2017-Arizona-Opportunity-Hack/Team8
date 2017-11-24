@@ -12,13 +12,13 @@ const Medicine = props => {
     else {
       var list = props.medicine.days_of_week;
       var timeList = [];
-      if (list.indexOf(1) != -1) timeList.push("Mon");
-      if (list.indexOf(2) != -1) timeList.push("Tue");
-      if (list.indexOf(3) != -1) timeList.push("Wed");
-      if (list.indexOf(4) != -1) timeList.push("Thu");
-      if (list.indexOf(5) != -1) timeList.push("Fri");
-      if (list.indexOf(6) != -1) timeList.push("Sat");
-      if (list.indexOf(1) != -1) timeList.push("Sun");
+      if (list.indexOf(1) !== -1) timeList.push("Mon");
+      if (list.indexOf(2) !== -1) timeList.push("Tue");
+      if (list.indexOf(3) !== -1) timeList.push("Wed");
+      if (list.indexOf(4) !== -1) timeList.push("Thu");
+      if (list.indexOf(5) !== -1) timeList.push("Fri");
+      if (list.indexOf(6) !== -1) timeList.push("Sat");
+      if (list.indexOf(1) !== -1) timeList.push("Sun");
 
       return timeList.join(" , ");
     }
@@ -30,10 +30,10 @@ const Medicine = props => {
     else {
       var list = props.medicine.administration_time;
       var timeList = [];
-      if (list.indexOf("Morning") != -1) timeList.push("Morning");
-      if (list.indexOf("Afternoon") != -1) timeList.push("Afternoon");
-      if (list.indexOf("Evening") != -1) timeList.push("Evening");
-      if (list.indexOf("Night") != -1) timeList.push("Night");
+      if (list.indexOf("Morning") !== -1) timeList.push("Morning");
+      if (list.indexOf("Afternoon") !== -1) timeList.push("Afternoon");
+      if (list.indexOf("Evening") !== -1) timeList.push("Evening");
+      if (list.indexOf("Night") !== -1) timeList.push("Night");
 
       return timeList.join(" , ");
     }

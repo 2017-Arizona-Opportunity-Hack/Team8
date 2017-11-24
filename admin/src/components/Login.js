@@ -26,22 +26,17 @@ class Login extends Component {
     this.state = { error_type: 0 };
   }
   handleLogin = values => {
-    // console.log('in handleLogin >>> values', values);
-    // console.log('in handleLogin >>> props', this.props);
     let email = values.email;
     let password = values.password;
     this.props.loginAction.login(email, password).then(state => {
-      if (state.value.data.success == 1) {
-        // this.props.history.remove("/login");
-        // this.props.history.pop();
-        // this.props.history.push("/");
+      if (state.value.data.success === 1) {
         window.location.reload();
         this.props.history.push("/child");
       } else {
         var err = state.value.data.errorMessage;
-        if ((err = "no admin")) {
+        if ((err === "no admin")) {
           this.setState({ error_type: 1 });
-        } else if ((err = "wrong password")) {
+        } else if ((err === "wrong password")) {
           this.setState({ error_type: 2 });
         }
       }

@@ -2,9 +2,28 @@ import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Field, FieldArray, reduxForm } from "redux-form";
+import { Field, reduxForm } from "redux-form";
 
 import * as medicineAction from "../actions/medicine";
+
+const required = value => value ? undefined : 'This field is required';
+
+const renderField = ({
+  input,
+  label,
+  placeholder,
+  className,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <label>{label}</label>
+    <div>
+      <input {...input} placeholder={placeholder} type={type} className={className} />
+      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+)
 
 class MedicineForm extends Component {
   constructor(props) {
@@ -31,17 +50,21 @@ class MedicineForm extends Component {
     this.updateDayCheckbox = this.updateDayCheckbox.bind(this);
     this.updateTimeCheckbox = this.updateTimeCheckbox.bind(this);
   }
+
   componentDidMount() {
     if (this.props != null) {
       this.setState(this.props.initialValues);
     }
   }
+
   showHideScheduled() {
     this.setState({ scheduled: !this.state.scheduled });
   }
+
   showHideEveryday() {
     this.setState({ everyday: !this.state.everyday });
   }
+
   updateDayCheckbox(e) {
     var day = e.target.name;
     if (day === "mon") this.setState({ mon: !this.state.mon });
@@ -53,6 +76,7 @@ class MedicineForm extends Component {
     else this.setState({ sun: !this.state.sun });
     // this.setState({ everyday: !this.state.everyday });
   }
+
   updateTimeCheckbox(e) {
     var time = e.target.name;
     if (time === "morning") this.setState({ morning: !this.state.morning });
@@ -123,7 +147,7 @@ class MedicineForm extends Component {
       };
     }
     console.log("in processSubmit >>> parent", medicine);
-    if (this.props.location.pathname.indexOf("update") != -1) {
+    if (this.props.location.pathname.indexOf("update") !== -1) {
       console.log("Formva medicinal", "update");
       this.props.medicineAction
         .updateMedicine(this.props.initialValues._id, medicine)
@@ -138,30 +162,10 @@ class MedicineForm extends Component {
           `/child/${this.props.match.params.id}/medicines`
         );
       });
-
       console.log("Formva medicinal", "add");
     }
-    // this.props.medicineAction.addMedicine(medicine).then(() => {
-    //   // props.history.push("/medicine");
-    //   console.log("Medicine Added");
-    // });
-    //
-    /*
-    if (props.match.params.id === "add") {
-      console.log("add");
-      props.medicineAction.addMedicine(medicine).then(() => {
-        // props.history.push("/medicine");
-      });
-    } else {
-      console.log("update");
-      props.parentAction
-        .updateMedicine(props.match.params.id, medicine)
-        .then(() => {
-          props.history.push("/medicine");
-        });
-    }
-    */
   };
+
   render() {
     return (
       <div className="container">
@@ -175,122 +179,93 @@ class MedicineForm extends Component {
         >
           <fieldset>
             <div className="form-group">
-              <label
-                htmlFor="medicine_name"
-                className="col-lg-10 control-label"
-              >
-                Medicine Name:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="medicine_name"
-                  component="input"
+                  component={renderField}
+                  label="Medicine Name:"
                   type="text"
                   className="form-control"
                   placeholder="Enter name of the medicine"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="reason" className="col-lg-10 control-label">
-                Reason:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="reason"
-                  component="input"
+                  component={renderField}
+                  label="Reason:"
                   type="text"
                   className="form-control"
                   placeholder="Enter reason for medication"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label
-                htmlFor="special_instructions"
-                className="col-lg-10 control-label"
-              >
-                Special Instructions:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="special_instructions"
-                  component="input"
+                  component={renderField}
+                  label="Special Instructions:"
                   type="text"
                   className="form-control"
                   placeholder="Enter Special Instructions"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label
-                htmlFor="prescribed_date"
-                className="col-lg-10 control-label"
-              >
-                Presribed Date (YYYY-MM-DD):
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="prescribed_date"
-                  component="input"
+                  component={renderField}
+                  label="Prescribed Date (YYYY-MM-DD):"
                   type="text"
                   className="form-control"
                   placeholder="Enter date of prescription"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label
-                htmlFor="physician_name"
-                className="col-lg-10 control-label"
-              >
-                Physician Name:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="physician_name"
-                  component="input"
+                  component={renderField}
+                  label="Physician Name:"
                   type="text"
                   placeholder="Enter name of the presribing Physician"
                   className="form-control"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label
-                htmlFor="physician_phone"
-                className="col-lg-10 control-label"
-              >
-                Physician Phone:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="physician_phone"
-                  component="input"
+                  component={renderField}
+                  label="Physician Phone:"
                   type="text"
                   placeholder="Enter contact of presribing Physician"
                   className="form-control"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="Dosage" className="col-lg-10 control-label">
-                Dosage:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="dosage"
-                  component="input"
+                  component={renderField}
+                  label="Dosage:"
                   type="text"
                   placeholder="Enter Dosage"
                   className="form-control"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
@@ -477,37 +452,30 @@ class MedicineForm extends Component {
             )}
             {this.state.scheduled && (
               <div className="form-group">
-                <label
-                  htmlFor="total_no_of_days"
-                  className="col-lg-10 control-label"
-                >
-                  Total Number of days:
-                </label>
                 <div className="col-lg-10">
                   <Field
                     name="total_no_of_days"
-                    component="input"
+                    component={renderField}
+                    label="Total Number of Days:"
                     type="text"
                     placeholder="Enter number of days the medicine is to be administered"
                     className="form-control"
-                    autoComplete="off"
+                    validate={[ required ]}
                   />
                 </div>
               </div>
             )}
             {this.state.scheduled && (
               <div className="form-group">
-                <label htmlFor="start_date" className="col-lg-10 control-label">
-                  Start Date (YYYY-MM-DD):
-                </label>
                 <div className="col-lg-10">
                   <Field
                     name="start_date"
-                    component="input"
+                    component={renderField}
+                    label="Start Date (YYYY-MM-DD):"
                     type="text"
                     placeholder="Enter starting date to begin medicine adminstration"
                     className="form-control"
-                    autoComplete="off"
+                    validate={[ required ]}
                   />
                 </div>
               </div>
@@ -535,37 +503,7 @@ class MedicineForm extends Component {
     );
   }
 }
-/*function generateInitialHouses(props, state) {
-  if (state.selectedHouses.length === 0) {
-    console.log("State");
-    if (props.location.state) {
-      console.log("boolean");
-      var parent = props.location.state.parent;
 
-      var house_id = parent["house_id"];
-      var houses = [];
-      for (var i = 0; i < house_id.length; i++) {
-        var id = house_id[i];
-        for (var j = 0; j < state.houses.length; j++) {
-          if (state.houses[j]["_id"] === id) {
-            houses.push(state.houses[j]);
-          }
-        }
-      }
-      state.selectedHouses = houses;
-      return state.selectedHouses;
-    } else {
-      // state.selectedHouses = [];
-      return state.selectedHouses;
-    }
-  } else {
-    if (props.match.params.id === "add") {
-      state.selectedHouses = [];
-    }
-    return state.selectedHouses;
-  }
-}
-*/
 function generateInitalValues(medicine) {
   let obj = {};
   obj["_id"] = medicine._id;
@@ -586,35 +524,34 @@ function generateInitalValues(medicine) {
     if (listDays === alldays) obj["everyday"] = true;
     else {
       obj["everyday"] = false;
-      if (listDays.indexOf(1) != -1) obj["mon"] = true;
-      if (listDays.indexOf(2) != -1) obj["tue"] = true;
-      if (listDays.indexOf(3) != -1) obj["wed"] = true;
-      if (listDays.indexOf(4) != -1) obj["thu"] = true;
-      if (listDays.indexOf(5) != -1) obj["fri"] = true;
-      if (listDays.indexOf(6) != -1) obj["sat"] = true;
-      if (listDays.indexOf(7) != -1) obj["sun"] = true;
+      if (listDays.indexOf(1) !== -1) obj["mon"] = true;
+      if (listDays.indexOf(2) !== -1) obj["tue"] = true;
+      if (listDays.indexOf(3) !== -1) obj["wed"] = true;
+      if (listDays.indexOf(4) !== -1) obj["thu"] = true;
+      if (listDays.indexOf(5) !== -1) obj["fri"] = true;
+      if (listDays.indexOf(6) !== -1) obj["sat"] = true;
+      if (listDays.indexOf(7) !== -1) obj["sun"] = true;
     }
     var listTimes = medicine.administration_time;
-    if (listTimes.indexOf("Morning") != -1) obj["morning"] = true;
-    if (listTimes.indexOf("Afternoon") != -1) obj["afternoon"] = true;
-    if (listTimes.indexOf("Evening") != -1) obj["evening"] = true;
-    if (listTimes.indexOf("Night") != -1) obj["night"] = true;
+    if (listTimes.indexOf("Morning") !== -1) obj["morning"] = true;
+    if (listTimes.indexOf("Afternoon") !== -1) obj["afternoon"] = true;
+    if (listTimes.indexOf("Evening") !== -1) obj["evening"] = true;
+    if (listTimes.indexOf("Night") !== -1) obj["night"] = true;
 
     obj["start_date"] = medicine.start_date;
     obj["total_no_of_days"] = medicine.total_no_of_days;
   }
   return obj;
 }
+
 function mapStateToProps(state, props) {
   return {
     children: state.children,
     parents: state.parents,
     houses: state.houses,
-    // initialValues: generateInitalValues(state,props)
     initialValues: props.location.state
       ? generateInitalValues(props.location.state.medicine)
       : null
-    // initialValues: { scheduled: true }
   };
 }
 

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import * as authAction from "../actions/login";
 import { bindActionCreators } from "redux";
-import { Field, reduxForm } from "redux-form";
 
 import { withRouter } from "react-router";
 

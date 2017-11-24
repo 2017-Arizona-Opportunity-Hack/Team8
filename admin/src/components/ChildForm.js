@@ -7,6 +7,25 @@ import * as childAction from "../actions/child";
 
 import HouseOption from "./HouseOption";
 
+const required = value => value ? undefined : 'This field is required';
+
+const renderField = ({
+  input,
+  label,
+  placeholder,
+  className,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <label>{label}</label>
+    <div>
+      <input {...input} placeholder={placeholder} type={type} className={className} />
+      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+)
+
 class ChildForm extends Component {
   constructor() {
     super();
@@ -14,19 +33,13 @@ class ChildForm extends Component {
       redirect: false
     };
   }
+
   buildHouseOptions = () => {
     return this.props.houses.map(house => (
       <HouseOption key={house._id} house={house} />
     ));
   };
-  // <option value={val}>{props.house.name}</option>
-  // buildHouseOptions = () => {
-  //   return this.props.houses.map(house => (
-  //     <option key={house._id} val={JSON.stringify(house)}>
-  //       {house.name}
-  //     </option>
-  //   ));
-  // };
+
   processSubmit = values => {
     console.log("in ChildForm >>> values ", values);
     let child = {
@@ -62,47 +75,41 @@ class ChildForm extends Component {
         >
           <fieldset>
             <div className="form-group">
-              <label htmlFor="lastname" className="col-lg-2 control-label">
-                Last Name:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="lastname"
-                  component="input"
+                  component={renderField}
+                  label="Last Name:"
                   type="text"
                   className="form-control"
                   placeholder="Enter the last name"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="firstname" className="col-lg-2 control-label">
-                First Name:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="firstname"
-                  component="input"
+                  component={renderField}
+                  label="First Name:"
                   type="text"
                   className="form-control"
                   placeholder="Enter the first name"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="age" className="col-lg-2 control-label">
-                Age:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="age"
-                  component="input"
+                  component={renderField}
+                  label="Age:"
                   type="text"
                   className="form-control"
                   placeholder="Enter the Age"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
               <div className="form-group">
@@ -139,14 +146,7 @@ class ChildForm extends Component {
     );
   }
 }
-function getInitialValues(state, props) {
-  var initial = props.location.state.child;
-  console.log("initial", initial.house);
-  let d = initial.house;
-  initial["housetest"] = 1;
-  initial["house"] = d;
-  return initial;
-}
+
 function mapStateToProps(state, props) {
   return {
     children: state.children,

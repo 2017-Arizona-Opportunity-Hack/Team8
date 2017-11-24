@@ -5,6 +5,25 @@ import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
 import * as houseAction from "../actions/house";
 
+const required = value => value ? undefined : 'This field is required';
+
+const renderField = ({
+  input,
+  label,
+  placeholder,
+  className,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <label>{label}</label>
+    <div>
+      <input {...input} placeholder={placeholder} type={type} className={className} />
+      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+)
+
 class HouseForm extends Component {
   constructor() {
     super();
@@ -44,32 +63,28 @@ class HouseForm extends Component {
         >
           <fieldset>
             <div className="form-group">
-              <label htmlFor="name" className="col-lg-2 control-label">
-                House Name:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="name"
-                  component="input"
+                  component={renderField}
+                  label="House Name:"
                   type="text"
                   className="form-control"
                   placeholder="Enter the House name"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="address" className="col-lg-2 control-label">
-                Address:
-              </label>
               <div className="col-lg-10">
                 <Field
                   name="address"
-                  component="input"
+                  component={renderField}
+                  label="Address:"
                   type="text"
                   className="form-control"
                   placeholder="Enter the House Address"
-                  autoComplete="off"
+                  validate={[ required ]}
                 />
               </div>
             </div>

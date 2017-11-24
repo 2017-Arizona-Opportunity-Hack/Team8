@@ -8,7 +8,6 @@ import * as parentAction from "../actions/parent";
 import * as selectedHousesAction from "../actions/selectedHouses";
 
 import HouseOption from "./HouseOption";
-// import HouseButton from "./HouseButton";
 
 const required = value => value ? undefined : 'This field is required';
 
