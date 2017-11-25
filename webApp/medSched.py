@@ -27,7 +27,7 @@ def createMedSchedule():
                     if todays_date.isoweekday() in medication["days_of_week"]:
                         schedule_row_object = {}
                         schedule_row_object['date'] = todays_date.strftime('%Y-%m-%d')
-                        schedule_row_object['child_name'] = child['firstname']+child['lastname']
+                        schedule_row_object['child_name'] = child['firstname']+" "+child['lastname']
                         schedule_row_object['house_id'] = child['house_id']
                         schedule_row_object['child_id'] = str(child['_id'])
                         #schedule_row_object['toggle_inhouse'] = child['toggle_inhouse']
