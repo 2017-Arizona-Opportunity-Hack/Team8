@@ -2,7 +2,7 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Field, FieldArray, reduxForm } from "redux-form";
+import { Field, FieldArray, reduxForm, SubmissionError } from "redux-form";
 
 import * as parentAction from "../actions/parent";
 import * as selectedHousesAction from "../actions/selectedHouses";
@@ -28,6 +28,29 @@ const renderField = ({
   </div>
 )
 
+const renderSelectField = ({
+  input,
+  label,
+  type,
+  children,
+  meta: { touched, error }
+}) => (
+  <div>
+    <select className="form-control" {...input}>
+      {children}
+    </select>
+    {touched && error && <span className="errorMsg">{error}</span>}
+  </div>
+)
+
+const validateHouses = (houses) => {
+  if (houses.length > 0) {
+    return null;
+  } else {
+    throw new SubmissionError('You must select a house from the list');
+  }
+}
+
 const renderHouses = ({
   fields,
   meta: { touched, error },
@@ -36,10 +59,9 @@ const renderHouses = ({
   <div>
     <Field
       name="house_select"
-      component="select"
+      component={renderSelectField}
       onChange={e => fields.push(JSON.parse(e.target.value))}
       className="form-control"
-      validate={[ required ]}
     >
       <option />
       {buildHouseOptions()}

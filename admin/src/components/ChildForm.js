@@ -12,9 +12,9 @@ const required = value => value ? undefined : 'This field is required';
 const renderField = ({
   input,
   label,
+  type,
   placeholder,
   className,
-  type,
   meta: { touched, error, warning }
 }) => (
   <div>
@@ -22,6 +22,25 @@ const renderField = ({
     <div>
       <input {...input} placeholder={placeholder} type={type} className={className} />
       {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+)
+
+const renderSelectField = ({
+  input,
+  label,
+  type,
+  children,
+  meta: { touched, error }
+}) => (
+  <div>
+    <label className="col-lg-2 control-label">{label}</label>
+    <div className="col-lg-10">
+      <select
+      className="form-control" {...input}>
+        {children}
+      </select>
+      {touched && error && <span className="errorMsg">{error}</span>}
     </div>
   </div>
 )
@@ -35,8 +54,8 @@ class ChildForm extends Component {
   }
 
   buildHouseOptions = () => {
-    return this.props.houses.map(house => (
-      <HouseOption key={house._id} house={house} />
+    return this.props.houses.map((house, i) => (
+      <HouseOption key={i} house={house} />
     ));
   };
 
@@ -112,22 +131,15 @@ class ChildForm extends Component {
                   validate={[ required ]}
                 />
               </div>
-              <div className="form-group">
-                <label className="col-lg-2 control-label">
-                  Select a house:
-                </label>
-                <div className="col-lg-10">
-                  <Field
-                    name="house"
-                    component="select"
-                    className="form-control"
-                  >
-                    <option />
-                    {console.log("suke", this.props)}
-                    {this.buildHouseOptions()}
-                  </Field>
-                </div>
-              </div>
+            </div>
+            <div className="form-group">
+              <Field
+                name="house"
+                component={renderSelectField}
+                label="Select a house:"
+              >
+                {this.buildHouseOptions()}
+              </Field>
             </div>
             <div className="form-group">
               <div className="col-lg-10 col-lg-offset-2">
