@@ -11,6 +11,19 @@ import HouseOption from "./HouseOption";
 
 const required = value => value ? undefined : 'This field is required';
 
+// const houseRequired = houses => houses.length > 0 ? undefined : 'You must select a house from the list';
+
+const houseRequired = (houses) => {
+  console.log('in houseRequired >>> houses', houses);
+  if (houses.length > 0) {
+    console.log('validation success');
+    return undefined;
+  } else {
+    console.log('validation failed');
+    return 'You must select a house from the list';
+  }
+}
+
 const renderField = ({
   input,
   label,
@@ -42,14 +55,6 @@ const renderSelectField = ({
     {touched && error && <span className="errorMsg">{error}</span>}
   </div>
 )
-
-const validateHouses = (houses) => {
-  if (houses.length > 0) {
-    return null;
-  } else {
-    throw new SubmissionError('You must select a house from the list');
-  }
-}
 
 const renderHouses = ({
   fields,
@@ -136,6 +141,7 @@ const ParentForm = props => {
                 name="houses"
                 component={renderHouses}
                 buildHouseOptions={buildHouseOptions}
+                validate={[ houseRequired ]}
               />
             </div>
           </div>
