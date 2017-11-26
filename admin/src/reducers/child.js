@@ -18,6 +18,7 @@ export default (state = initialState, action) => {
       return state;
     case "CHILD_ADD_FULFILLED":
       // let updatedArr = [...state];
+      console.log("Halllele", action.payload.data.child);
       var st = action.payload.data.child;
       var d = JSON.stringify(st["house"]);
       st["house"] = d;

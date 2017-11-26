@@ -5,7 +5,7 @@ import json
 from bson import ObjectId
 from bson.json_util import dumps
 from flask_cors import CORS, cross_origin
-from medSched import createMedSchedule
+# from medSched import createMedSchedule
 import pytz
 app = Flask(__name__)
 cors = CORS(app)
@@ -55,29 +55,30 @@ def login():
     client.close()
     return jsonify({'success':0,'errorMessage':'error'})
 
-@app.route('/parentlogin', methods = ['POST'])
+@app.route('/parentLogin', methods = ['POST'])
 def parentlogin():
-    if request.method == 'POST':
-        username = request.form['username']
+    db,client = connect_to_db()
+    try:
+        email = request.form['email']
         password = request.form['password']
-        db,client = connect_to_db()
-        dict = db.Parents.find_one({'username': username}, {'username':1, 'password': 1})
-        if dict:
-            if dict['password'] == password:
-                #session['username'] = request.form['username']
-                update_dict = {}
-                #timestamp= datetime.datetime.now()
-                db.Parents.update_many({},{'$set':{'logged_in': False}})
-                db.Parents.find_one_and_update({'username': username},{'$set':{'logged_in': True}})
+        parent = db.Parents.find_one({'email': email})
+        if parent:
+            if str(parent['password']) == str(password):
+                
                 client.close()
-                return "true"
+                parent['_id']=str(parent['_id'])
+                return jsonify({'success':1,'errorMessage':'','parent':parent})
             else:
-                return "false"
+                return jsonify({'success':0,'errorMessage':'wrong password'})
         else:
             client.close()
-            return "false"
-    else:
-        return "false"
+            return jsonify({'success':0,'errorMessage':'no user'})
+
+    except Exception as e:
+        print e
+
+    client.close()
+    return jsonify({'success':0,'errorMessage':'error'})
 
 		
 @app.route('/logout', methods = ["POST"])
@@ -179,7 +180,7 @@ def logMedicineGiven():
         db, client = connect_to_db()
         med_details = db.MedicineSchedule.find_and_modify({'_id': ObjectId(sched_id)},{'$set':{'done':'True', 'actual_time':datetime.datetime.now(pytz.timezone("America/Phoenix"))}})
         client.close()
-        return jsonify({'success': 1, 'errorMessage': ''})
+        return jsonify({'success': 1, 'errorMessage': '','_id':sched_id})
     except Exception as e:
         print e
         client.close()
@@ -266,6 +267,7 @@ def addChild():
             client.close()
             house = db.Houses.find_one({'_id':ObjectId(house_id)})
             house['_id'] = str(house['_id'])
+            print house
             return jsonify({'success':1,'errorMessage':'','child':{'firstname':firstname,'lastname':lastname,'dob':dob,'house':house,'_id':str(_id)}})
         else:
             client.close()
@@ -354,6 +356,7 @@ def getAllChildrenForHouse():
         house_id = request.form['house_id']
         children = db.Children.find({'house_id':house_id})
         all_children = []
+
         for child in children:
             child_object={
             "_id":str(child['_id']),
@@ -667,14 +670,13 @@ def deleteParent():
 def getAllHousesForParent():
     db, client = connect_to_db()
     try:
-        _id = request.form['_id']
+        _id = request.form['parent_id']
         parent = db.Parents.find_one({'_id':ObjectId(_id)})
-        parent_houses_id = parent['house_id']   
+        parent_houses_id = parent['house_ids']   
         all_houses = [] 
         for i in range(len(parent_houses_id)):
             house = db.Houses.find_one({'_id':ObjectId(parent_houses_id[i])})
             house_object={
-            "house_id":house['house_id'],
             "name":house['name'],
             "address":house['address'],
             "_id":str(house['_id'])
@@ -694,19 +696,24 @@ def getAllHousesForParent():
 #mobileapp toggle
 @app.route('/togglechild', methods = ["POST"])
 def togglechild():
+    db, client = connect_to_db()
+
     try:
         if request.method == 'POST':
             child_id = request.form['child_id']
-            db, client = connect_to_db()
+            print child_id
             todays_date = datetime.datetime.now(pytz.timezone("America/Phoenix")).date()
-            toggle_child = db.Children.find_one({"_id":ObjectId(child_id) },{"_id":0,"toggle_inhouse":1})
+            toggle_child = db.Children.find_one({"_id":ObjectId(child_id) })
+            print toggle_child
             if toggle_child['toggle_inhouse'] =='True':
                 new_state = 'False'
             elif toggle_child['toggle_inhouse'] =='False':
                 new_state = 'True'
 
+            print "hi"
             db.Children.find_one_and_update({"_id":ObjectId(child_id) },{'$set':{'toggle_inhouse': new_state }})
 
+            print "hi";
             if new_state == 'True':
                 db.ChildStatus.find_one_and_update({'child_id': child_id}, {'$set':{'in_dt': datetime.datetime.now(pytz.timezone("America/Phoenix"))}} ,sort=[('_id',-1)])
 
@@ -732,7 +739,7 @@ def togglechild():
                     {'$set': {'done': 'N/A'}})
 
             client.close()
-            return jsonify({"success":1,"errorMessage":""})
+            return jsonify({"success":1,"errorMessage":"",'toggle_inhouse':new_state})
     except Exception as e:
         print e
         client.close()

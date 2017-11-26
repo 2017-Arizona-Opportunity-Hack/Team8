@@ -15,7 +15,7 @@ export const addChild = child => {
   console.log(child.house);
   formdata.append("firstname", child.firstname);
   formdata.append("lastname", child.lastname);
-  formdata.append("age", child.age);
+  formdata.append("dob", child.dob);
   console.log("JSON parser", JSON.parse(child.house));
   formdata.append("house_id", JSON.parse(child.house)._id);
   return {
@@ -35,7 +35,7 @@ export const updateChild = (id, child) => {
   formdata.append("_id", id);
   formdata.append("firstname", child.firstname);
   formdata.append("lastname", child.lastname);
-  formdata.append("age", child.age);
+  formdata.append("dob", child.dob);
   console.log("JSON parser", JSON.parse(child.house));
   formdata.append("house_id", JSON.parse(child.house)._id);
   return {

@@ -7,7 +7,7 @@ import * as childAction from "../actions/child";
 
 import HouseOption from "./HouseOption";
 
-const required = value => value ? undefined : 'This field is required';
+const required = value => (value ? undefined : "This field is required");
 
 const renderField = ({
   input,
@@ -20,11 +20,18 @@ const renderField = ({
   <div>
     <label>{label}</label>
     <div>
-      <input {...input} placeholder={placeholder} type={type} className={className} />
-      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className={className}
+      />
+      {touched &&
+        ((error && <span className="errorMsg">{error}</span>) ||
+          (warning && <span>{warning}</span>))}
     </div>
   </div>
-)
+);
 
 const renderSelectField = ({
   input,
@@ -34,16 +41,15 @@ const renderSelectField = ({
   meta: { touched, error }
 }) => (
   <div>
-    <label className="col-lg-2 control-label">{label}</label>
+    <label className="col-lg-10 control-label">{label}</label>
     <div className="col-lg-10">
-      <select
-      className="form-control" {...input}>
+      <select className="form-control" {...input}>
         {children}
       </select>
       {touched && error && <span className="errorMsg">{error}</span>}
     </div>
   </div>
-)
+);
 
 class ChildForm extends Component {
   constructor() {
@@ -64,7 +70,7 @@ class ChildForm extends Component {
     let child = {
       lastname: values.lastname,
       firstname: values.firstname,
-      age: values.age,
+      dob: values.dob,
       house: values.house
     };
 
@@ -102,7 +108,7 @@ class ChildForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter the last name"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -115,20 +121,20 @@ class ChildForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter the first name"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
             <div className="form-group">
               <div className="col-lg-10">
                 <Field
-                  name="age"
+                  name="dob"
                   component={renderField}
-                  label="Age:"
+                  label="Date of Birth: (YYYY-MM-DD)"
                   type="text"
                   className="form-control"
-                  placeholder="Enter the Age"
-                  validate={[ required ]}
+                  placeholder="Enter the Date of Birth"
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -137,7 +143,9 @@ class ChildForm extends Component {
                 name="house"
                 component={renderSelectField}
                 label="Select a house:"
+                validate={[required]}
               >
+                <option />
                 {this.buildHouseOptions()}
               </Field>
             </div>

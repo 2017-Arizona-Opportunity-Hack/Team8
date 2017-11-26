@@ -4,5 +4,5 @@ import logger from "redux-logger";
 import promises from "redux-promise-middleware";
 
 export default initialState => {
-  return createStore(rootReducer, applyMiddleware(logger, promises()));
+  return createStore(rootReducer, applyMiddleware(promises()));
 };

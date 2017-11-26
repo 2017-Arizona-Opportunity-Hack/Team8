@@ -10,7 +10,7 @@ const Child = props => {
       <td>{props.child.lastname}</td>
       <td>{props.child.firstname}</td>
       <td>{JSON.parse(props.child.house).name}</td>
-      <td>{props.child.age}</td>
+      <td>{props.child.dob}</td>
       <td>
         <Link
           className="btn btn-outline-info"
