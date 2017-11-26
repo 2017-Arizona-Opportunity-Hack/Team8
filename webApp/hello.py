@@ -141,7 +141,7 @@ def getMedScheduleForChild():
     try:
         child_id = request.form['child_id']
         db,client = connect_to_db()
-        med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.datetime.now(pytz.timezone("America/Phoenix")).date().strftime('%Y-%m-%d')})
+        med_details = db.MedicineSchedule.find({'child_id': child_id,'date': datetime.datetime.now(pytz.timezone("America/Phoenix")).date().strftime('%Y-%m-%d'),'done':'False'})
         list1 = []
         for c in med_details:
             c['_id'] = str(c['_id'])
