@@ -357,9 +357,9 @@ def getAllChildrenForHouse():
         for child in children:
             child_object={
             "_id":str(child['_id']),
-            "firstname":child['first_name'],
-            "lastname":child['last_name'],
-            "age":child['age'],
+            "firstname":child['firstname'],
+            "lastname":child['lastname'],
+            "dob":child['dob'],
             "house_id":child['house_id']
             }
 
