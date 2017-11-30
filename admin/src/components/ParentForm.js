@@ -9,20 +9,13 @@ import * as selectedHousesAction from "../actions/selectedHouses";
 
 import HouseOption from "./HouseOption";
 
-const required = value => value ? undefined : 'This field is required';
-
-// const houseRequired = houses => houses.length > 0 ? undefined : 'You must select a house from the list';
-
-const houseRequired = (houses) => {
-  console.log('in houseRequired >>> houses', houses);
-  if (houses.length > 0) {
-    console.log('validation success');
-    return undefined;
-  } else {
-    console.log('validation failed');
-    return 'You must select a house from the list';
-  }
-}
+const required = value => (value ? undefined : "This field is required");
+const houseRequired = values => {
+  console.log(values);
+  const errors = {};
+  errors.lastname = "Hell";
+  return errors;
+};
 
 const renderField = ({
   input,
@@ -35,11 +28,18 @@ const renderField = ({
   <div>
     <label>{label}</label>
     <div>
-      <input {...input} placeholder={placeholder} type={type} className={className} />
-      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className={className}
+      />
+      {touched &&
+        ((error && <span className="errorMsg">{error}</span>) ||
+          (warning && <span>{warning}</span>))}
     </div>
   </div>
-)
+);
 
 const renderSelectField = ({
   input,
@@ -48,13 +48,16 @@ const renderSelectField = ({
   children,
   meta: { touched, error }
 }) => (
-  <div>
-    <select className="form-control" {...input}>
-      {children}
-    </select>
-    {touched && error && <span className="errorMsg">{error}</span>}
+  <div className="control-label col-lg-10">
+    <label>{label}</label>
+    <div>
+      <select className="form-control" {...input}>
+        {children}
+      </select>
+      {touched && error && <span className="errorMsg">{error}</span>}
+    </div>
   </div>
-)
+);
 
 const renderHouses = ({
   fields,
@@ -65,15 +68,17 @@ const renderHouses = ({
     <Field
       name="house_select"
       component={renderSelectField}
-      onChange={e => fields.push(JSON.parse(e.target.value))}
-      className="form-control"
+      onChange={e => {
+        try {
+          fields.push(JSON.parse(e.target.value));
+        } catch (err) {}
+      }}
     >
       <option />
       {buildHouseOptions()}
     </Field>
-    {touched && error && <span className="errorMsg">{error}</span>}
     <br />
-    <div className="form-group" name="houses">
+    <div className="col-lg-10" name="houses">
       Selected houses:<br />
       {fields.map((house, index) => (
         <button
@@ -94,7 +99,6 @@ const renderHouses = ({
 );
 
 const ParentForm = props => {
-
   const buildHouseOptions = () => {
     return props.houses.map(house => (
       <HouseOption key={house._id} house={house} />
@@ -102,24 +106,27 @@ const ParentForm = props => {
   };
 
   const processSubmit = values => {
-    let parent = {
-      lastname: values.lastname,
-      firstname: values.firstname,
-      phone: values.phone,
-      email: values.email,
-      password: values.password,
-      houses: values.houses
-    };
-    if (props.match.params.id === "add") {
-      props.parentAction.addParent(parent).then(() => {
-        props.history.push("/parent");
-      });
-    } else {
-      props.parentAction
-        .updateParent(props.match.params.id, parent)
-        .then(() => {
+    if (values.houses) {
+      let parent = {
+        lastname: values.lastname,
+        firstname: values.firstname,
+        phone: values.phone,
+        email: values.email,
+        password: values.password,
+        houses: values.houses
+      };
+      if (props.match.params.id === "add") {
+        props.parentAction.addParent(parent).then(() => {
           props.history.push("/parent");
         });
+      } else {
+        props.parentAction
+          .updateParent(props.match.params.id, parent)
+          .then(() => {
+            props.history.push("/parent");
+          });
+      }
+    } else {
     }
   };
 
@@ -135,13 +142,12 @@ const ParentForm = props => {
       >
         <fieldset>
           <div className="form-group">
-            <label className="col-lg-2 control-label">Select a house:</label>
-            <div className="col-lg-10">
+            <label className="col-lg-10 ">Select a house:</label>
+            <div className="col-lg-offset-2">
               <FieldArray
                 name="houses"
                 component={renderHouses}
                 buildHouseOptions={buildHouseOptions}
-                validate={[ houseRequired ]}
               />
             </div>
           </div>
@@ -154,7 +160,6 @@ const ParentForm = props => {
                 label="Last Name:"
                 className="form-control"
                 placeholder="Enter the last name"
-                validate={[ required ]}
               />
             </div>
           </div>
@@ -167,7 +172,7 @@ const ParentForm = props => {
                 type="text"
                 className="form-control"
                 placeholder="Enter the first name"
-                validate={[ required ]}
+                validate={[required]}
               />
             </div>
           </div>
@@ -180,7 +185,7 @@ const ParentForm = props => {
                 type="text"
                 className="form-control"
                 placeholder="Enter the phone"
-                validate={[ required ]}
+                validate={[required]}
               />
             </div>
           </div>
@@ -193,7 +198,7 @@ const ParentForm = props => {
                 type="text"
                 className="form-control"
                 placeholder="Enter the email"
-                validate={[ required ]}
+                validate={[required]}
               />
             </div>
           </div>
@@ -205,7 +210,7 @@ const ParentForm = props => {
                 label="Password:"
                 type="text"
                 className="form-control"
-                validate={[ required ]}
+                validate={[required]}
               />
             </div>
           </div>
@@ -244,5 +249,5 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  reduxForm({ form: "parent" })(ParentForm)
+  reduxForm({ form: "parent", houseRequired })(ParentForm)
 );
