@@ -41,6 +41,7 @@ class MedLog extends Component {
             onPress={() => {
               let formdata = new FormData();
               formdata.append("schedule_id", this.props.schedule_id);
+              console.log('in MedLog >>> formdata', formdata);
               fetch("https://stormy-gorge-54252.herokuapp.com/logMedicineGiven", {
                 method: "POST",
                 headers: {

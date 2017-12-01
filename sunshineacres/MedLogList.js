@@ -22,16 +22,20 @@ class MedLogList extends Component {
   };
 
   componentDidMount() {
+    console.log('in MedLogList >>> props', this.props);
+    console.log('in MedLogList >>> child_id', this.props.navigation.state.params.child_id);
+    console.log('in MedLogList >>> child_name', this.props.navigation.state.params.child_name);
     this.setState({
       child_id: this.props.navigation.state.params.child_id,
       child_name: this.props.navigation.state.params.child_name
     });
 
-    // console.log('in MedLogList, state', this.state);
+    console.log('in MedLogList, state', this.state);
 
     let formdata = new FormData();
 
     formdata.append("child_id", this.props.navigation.state.params.child_id);
+    console.log('in MedLogList >>> formdata', formdata);
     fetch("https://stormy-gorge-54252.herokuapp.com/getMedScheduleForChild", {
       method: "POST",
       headers: {
@@ -81,7 +85,7 @@ class MedLogList extends Component {
         />
       );
     } else {
-      // console.log("med_details", this.state.med_details);
+      console.log("med_details", this.state.med_details);
       return (
         <View>
           <View style={styles.headerContainer}>
