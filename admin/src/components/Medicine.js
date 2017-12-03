@@ -20,7 +20,7 @@ const Medicine = props => {
       if (list.indexOf(6) !== -1) timeList.push("Sat");
       if (list.indexOf(1) !== -1) timeList.push("Sun");
 
-      return timeList.join(" , ");
+      return timeList.join(" - ");
     }
   };
   const generateTimes = () => {
@@ -35,7 +35,7 @@ const Medicine = props => {
       if (list.indexOf("Evening") !== -1) timeList.push("Evening");
       if (list.indexOf("Night") !== -1) timeList.push("Night");
 
-      return timeList.join(" , ");
+      return timeList.join(" - ");
     }
   };
   return (
@@ -43,11 +43,13 @@ const Medicine = props => {
       <td className="table-row">{props.medicine.medicine_name}</td>
       <td className="table-row">{props.medicine.reason}</td>
       <td className="table-row">
-        {props.medicine.physician_name + " , " + props.medicine.physician_phone}
+        {props.medicine.physician_name + " : " + props.medicine.physician_phone}
       </td>
       <td className="table-row">{generateSchedule()}</td>
       <td className="table-row">{generateTimes()}</td>
-      <td className="table-row">{props.medicine.start_date}</td>
+      <td className="table-row">
+        {props.medicine.start_date ? props.medicine.start_date : "N/A"}
+      </td>
       <td>
         <Link
           className="btn btn-outline-info"

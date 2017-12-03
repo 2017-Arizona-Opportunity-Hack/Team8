@@ -14,8 +14,38 @@ class ChildList extends Component {
     console.log("in ChildList >>> ", this.props);
     console.log("localStorage", localStorage.getItem("user"));
 
-    return (
+    if (this.props.children) {
+      return (
+        <div className="container">
+          <div className="row">
+            <div className="col btn-add">
+              <Link className="btn btn-outline-info" to={`/child/add`}>
+                Add a New Child
+              </Link>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col">
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>House</th>
+                    <th>Date of Birth</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>{this.getChildren()}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
       <div className="container">
+        No Children Added
         <div className="row">
           <div className="col btn-add">
             <Link className="btn btn-outline-info" to={`/child/add`}>
@@ -23,25 +53,8 @@ class ChildList extends Component {
             </Link>
           </div>
         </div>
-
-        <div className="row">
-          <div className="col">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>House</th>
-                  <th>Date of Birth</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>{this.getChildren()}</tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    );
+      </div>;
+    }
   }
 }
 function mapStateToProps(state, props) {

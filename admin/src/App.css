@@ -15,6 +15,7 @@ a:hover {
   text-decoration: none;
 }
 .table-row {
+  width: 250px !important;
 }
 .list {
   color: #fff;

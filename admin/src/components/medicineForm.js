@@ -6,7 +6,7 @@ import { Field, reduxForm } from "redux-form";
 
 import * as medicineAction from "../actions/medicine";
 
-const required = value => value ? undefined : 'This field is required';
+const required = value => (value ? undefined : "This field is required");
 
 const renderField = ({
   input,
@@ -19,11 +19,18 @@ const renderField = ({
   <div>
     <label>{label}</label>
     <div>
-      <input {...input} placeholder={placeholder} type={type} className={className} />
-      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className={className}
+      />
+      {touched &&
+        ((error && <span className="errorMsg">{error}</span>) ||
+          (warning && <span>{warning}</span>))}
     </div>
   </div>
-)
+);
 
 class MedicineForm extends Component {
   constructor(props) {
@@ -42,7 +49,9 @@ class MedicineForm extends Component {
       morning: false,
       afternoon: false,
       evening: false,
-      night: false
+      night: false,
+      errorTimes: false,
+      errorDays: false
     };
 
     this.showHideScheduled = this.showHideScheduled.bind(this);
@@ -63,6 +72,30 @@ class MedicineForm extends Component {
 
   showHideEveryday() {
     this.setState({ everyday: !this.state.everyday });
+  }
+  checkValidationForTime() {
+    var s = this.state;
+    if (s.morning || s.afternoon || s.evening || s.night) {
+      this.setState({ errorTimes: false });
+      return true;
+    } else {
+      this.setState({ errorTimes: true });
+      return false;
+    }
+  }
+  checkValidationForDay() {
+    var s = this.state;
+    if (s.everyday) {
+      return true;
+    } else {
+      if (s.mon || s.tue || s.wed || s.thu || s.fri || s.sat || s.sun) {
+        this.setState({ errorDays: false });
+        return true;
+      } else {
+        this.setState({ errorDays: true });
+        return false;
+      }
+    }
   }
 
   updateDayCheckbox(e) {
@@ -93,46 +126,67 @@ class MedicineForm extends Component {
     let medicine = {};
 
     if (this.state.scheduled) {
-      if (this.state.morning) {
-        listTimes.push("Morning");
-      }
-      if (this.state.afternoon) {
-        listTimes.push("Afternoon");
-      }
-      if (this.state.evening) {
-        listTimes.push("Evening");
-      }
-      if (this.state.night) {
-        listTimes.push("Night");
-      }
-      listTimes = listTimes.join(",");
+      var checkDay = this.checkValidationForDay();
+      var checkTime = this.checkValidationForTime();
+      if (checkDay && checkTime) {
+        if (this.state.morning) {
+          listTimes.push("Morning");
+        }
+        if (this.state.afternoon) {
+          listTimes.push("Afternoon");
+        }
+        if (this.state.evening) {
+          listTimes.push("Evening");
+        }
+        if (this.state.night) {
+          listTimes.push("Night");
+        }
+        listTimes = listTimes.join(",");
 
-      if (this.state.everyday) listDays = ["1", "2", "3", "4", "5", "6", "7"];
-      else {
-        if (this.state.mon) listDays.push("1");
-        if (this.state.tue) listDays.push("2");
-        if (this.state.wed) listDays.push("3");
-        if (this.state.thu) listDays.push("4");
-        if (this.state.fri) listDays.push("5");
-        if (this.state.sat) listDays.push("6");
-        if (this.state.sun) listDays.push("7");
+        if (this.state.everyday) listDays = ["1", "2", "3", "4", "5", "6", "7"];
+        else {
+          if (this.state.mon) listDays.push("1");
+          if (this.state.tue) listDays.push("2");
+          if (this.state.wed) listDays.push("3");
+          if (this.state.thu) listDays.push("4");
+          if (this.state.fri) listDays.push("5");
+          if (this.state.sat) listDays.push("6");
+          if (this.state.sun) listDays.push("7");
+        }
+        listDays = listDays.join(",");
+        medicine = {
+          medicine_name: values.medicine_name,
+          reason: values.reason,
+          special_instructions: values.special_instructions,
+          prescribed_date: values.prescribed_date,
+          physician_name: values.physician_name,
+          physician_phone: values.physician_phone,
+          days_of_week: listDays,
+          dosage: values.dosage,
+          child_id: this.props.match.params.id,
+          administration_time: listTimes,
+          scheduled: "True",
+          total_no_of_days: values.total_no_of_days,
+          start_date: values.start_date
+        };
+        if (this.props.location.pathname.indexOf("update") !== -1) {
+          console.log("Formva medicinal", "update");
+          this.props.medicineAction
+            .updateMedicine(this.props.initialValues._id, medicine)
+            .then(() => {
+              this.props.history.push(
+                `/child/${this.props.match.params.id}/medicines`
+              );
+            });
+        } else {
+          this.props.medicineAction.addMedicine(medicine).then(() => {
+            this.props.history.push(
+              `/child/${this.props.match.params.id}/medicines`
+            );
+          });
+          console.log("Formva medicinal", "add");
+        }
       }
-      listDays = listDays.join(",");
-      medicine = {
-        medicine_name: values.medicine_name,
-        reason: values.reason,
-        special_instructions: values.special_instructions,
-        prescribed_date: values.prescribed_date,
-        physician_name: values.physician_name,
-        physician_phone: values.physician_phone,
-        days_of_week: listDays,
-        dosage: values.dosage,
-        child_id: this.props.match.params.id,
-        administration_time: listTimes,
-        scheduled: "True",
-        total_no_of_days: values.total_no_of_days,
-        start_date: values.start_date
-      };
     } else {
       medicine = {
         medicine_name: values.medicine_name,
@@ -145,24 +199,23 @@ class MedicineForm extends Component {
         child_id: this.props.match.params.id,
         scheduled: "False"
       };
-    }
-    console.log("in processSubmit >>> parent", medicine);
-    if (this.props.location.pathname.indexOf("update") !== -1) {
-      console.log("Formva medicinal", "update");
-      this.props.medicineAction
-        .updateMedicine(this.props.initialValues._id, medicine)
-        .then(() => {
+      if (this.props.location.pathname.indexOf("update") !== -1) {
+        console.log("Formva medicinal", "update");
+        this.props.medicineAction
+          .updateMedicine(this.props.initialValues._id, medicine)
+          .then(() => {
+            this.props.history.push(
+              `/child/${this.props.match.params.id}/medicines`
+            );
+          });
+      } else {
+        this.props.medicineAction.addMedicine(medicine).then(() => {
           this.props.history.push(
             `/child/${this.props.match.params.id}/medicines`
           );
         });
-    } else {
-      this.props.medicineAction.addMedicine(medicine).then(() => {
-        this.props.history.push(
-          `/child/${this.props.match.params.id}/medicines`
-        );
-      });
-      console.log("Formva medicinal", "add");
+        console.log("Formva medicinal", "add");
+      }
     }
   };
 
@@ -187,7 +240,7 @@ class MedicineForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter name of the medicine"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -200,7 +253,7 @@ class MedicineForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter reason for medication"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -213,7 +266,7 @@ class MedicineForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter Special Instructions"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -226,7 +279,7 @@ class MedicineForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter date of prescription"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -239,7 +292,7 @@ class MedicineForm extends Component {
                   type="text"
                   placeholder="Enter name of the presribing Physician"
                   className="form-control"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -252,7 +305,7 @@ class MedicineForm extends Component {
                   type="text"
                   placeholder="Enter contact of presribing Physician"
                   className="form-control"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -265,7 +318,7 @@ class MedicineForm extends Component {
                   type="text"
                   placeholder="Enter Dosage"
                   className="form-control"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -329,6 +382,11 @@ class MedicineForm extends Component {
                     onChange={this.showHideEveryday}
                   />
                 </div>
+                {this.state.errorDays && (
+                  <span className="errorMsg col-lg-10">
+                    Select at least one day
+                  </span>
+                )}
               </div>
             )}
             {!this.state.everyday &&
@@ -448,6 +506,11 @@ class MedicineForm extends Component {
                     onChange={e => this.updateTimeCheckbox(e)}
                   />
                 </div>
+                {this.state.errorTimes && (
+                  <span className="errorMsg col-lg-10">
+                    Enter at least one Administration time
+                  </span>
+                )}
               </div>
             )}
             {this.state.scheduled && (
@@ -460,7 +523,7 @@ class MedicineForm extends Component {
                     type="text"
                     placeholder="Enter number of days the medicine is to be administered"
                     className="form-control"
-                    validate={[ required ]}
+                    validate={[required]}
                   />
                 </div>
               </div>
@@ -475,7 +538,7 @@ class MedicineForm extends Component {
                     type="text"
                     placeholder="Enter starting date to begin medicine adminstration"
                     className="form-control"
-                    validate={[ required ]}
+                    validate={[required]}
                   />
                 </div>
               </div>
@@ -487,14 +550,14 @@ class MedicineForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link
-                  to={{
-                    pathname: `/child/${this.props.match.params.id}/medicines`
+                <div
+                  onClick={() => {
+                    this.props.history.goBack();
                   }}
                   className="btn btn-outline-info"
                 >
                   Cancel
-                </Link>
+                </div>
               </div>
             </div>
           </fieldset>

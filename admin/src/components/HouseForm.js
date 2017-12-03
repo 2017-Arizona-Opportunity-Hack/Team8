@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Field, reduxForm } from "redux-form";
 import * as houseAction from "../actions/house";
 
-const required = value => value ? undefined : 'This field is required';
+const required = value => (value ? undefined : "This field is required");
 
 const renderField = ({
   input,
@@ -18,11 +18,18 @@ const renderField = ({
   <div>
     <label>{label}</label>
     <div>
-      <input {...input} placeholder={placeholder} type={type} className={className} />
-      {touched && ((error && <span className="errorMsg">{error}</span>) || (warning && <span>{warning}</span>))}
+      <input
+        {...input}
+        placeholder={placeholder}
+        type={type}
+        className={className}
+      />
+      {touched &&
+        ((error && <span className="errorMsg">{error}</span>) ||
+          (warning && <span>{warning}</span>))}
     </div>
   </div>
-)
+);
 
 class HouseForm extends Component {
   constructor() {
@@ -71,7 +78,7 @@ class HouseForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter the House name"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -84,7 +91,7 @@ class HouseForm extends Component {
                   type="text"
                   className="form-control"
                   placeholder="Enter the House Address"
-                  validate={[ required ]}
+                  validate={[required]}
                 />
               </div>
             </div>
@@ -94,9 +101,12 @@ class HouseForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link to="/house" className="btn btn-outline-info">
+                <div
+                  onClick={() => this.props.history.goBack()}
+                  className="btn btn-outline-info"
+                >
                   Cancel
-                </Link>
+                </div>
               </div>
             </div>
           </fieldset>

@@ -155,9 +155,12 @@ class ChildForm extends Component {
                   Submit
                 </button>{" "}
                 &nbsp;
-                <Link to="/child" className="btn btn-outline-info">
+                <div
+                  onClick={() => this.props.history.goBack()}
+                  className="btn btn-outline-info"
+                >
                   Cancel
-                </Link>
+                </div>
               </div>
             </div>
           </fieldset>

@@ -24,6 +24,10 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import LeftNav from "./components/LeftNav";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loaded: false };
+  }
   componentDidMount() {
     console.log("HErEREERERERERERERER");
     this.props.parentAction.fetchParents();
