@@ -62,8 +62,8 @@ class MedLogList extends Component {
         dosage: arr[i].dosage,
         schedule_id: arr[i]._id,
         done: arr[i].done,
-        // toggle: arr[i].toggle_inhouse,
-        toggle: true,
+        toggle: arr[i].toggle,
+        // toggle: true,
         date: arr[i].date,
         reason: arr[i].reason,
         time: arr[i].administration_time
@@ -94,7 +94,7 @@ class MedLogList extends Component {
           <ListView
             style={styles.contentContainer}
             dataSource={ds.cloneWithRows(this.state.med_details)}
-            renderRow={data => <MedLog {...data} />}
+            renderRow={data => <MedLog data={data} />}
           />
         </View>
       );

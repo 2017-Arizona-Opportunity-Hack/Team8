@@ -60,8 +60,8 @@ class MainScreen extends Component {
           loading: false,
           showChild: true,
           child_id: response.all_children[0]._id,
-          child_name: response.all_children[0].firstname
-          // child_toggle: response.toggle_inhouse
+          child_name: response.all_children[0].firstname,
+          child_toggle: response.toggle
         });
         console.log('in fetchChildren >>> this.state.child', this.state.child);
       })
@@ -199,8 +199,8 @@ class MainScreen extends Component {
                 onValueChange={(itemValue, itemIndex) =>
                   this.setState({
                     child_id: itemValue,
-                    child_toggle: this.state.child[itemIndex].toggle_inhouse,
-                    child_name: this.state.child[itemIndex].first_name
+                    child_toggle: this.state.child[itemIndex].toggle,
+                    child_name: this.state.child[itemIndex].firstname
                   })}
                 style={{ width: 300, height: 50 }}
                 itemStyle={{ height: 50 }}

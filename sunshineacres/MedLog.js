@@ -18,15 +18,22 @@ class MedLog extends Component {
   }
 
   render() {
+    console.log('in MedLog >>> props', this.props);
+    let { med_name,
+      date,
+      time,
+      dosage,
+      reason,
+      special_instructions } = this.props.data;
     return (
       <View>
-        <Card title={this.props.med_name}>
-          <Text style={{ width: 300 }}>Date: {this.props.date}</Text>
-          <Text style={{ width: 300 }}>Time: {this.props.time}</Text>
-          <Text>Dosage: {this.props.dosage}</Text>
-          <Text style={{ width: 300 }}>Reason: {this.props.reason}</Text>
+        <Card title={med_name}>
+          <Text style={{ width: 300 }}>Date: {date}</Text>
+          <Text style={{ width: 300 }}>Time: {time}</Text>
+          <Text>Dosage: {dosage}</Text>
+          <Text style={{ width: 300 }}>Reason: {reason}</Text>
           <Text style={{ marginBottom: 10 }}>
-            {this.props.special_instructions}
+            {special_instructions}
           </Text>
           <Button
             icon={{ name: "check" }}
@@ -49,7 +56,9 @@ class MedLog extends Component {
                 },
                 body: formdata
               })
-                .then(response => this.setState({ done: true }))
+                .then(response => {
+                  this.setState({ done: true })
+              })
                 .catch(error => {
                   console.error(error);
                 });
