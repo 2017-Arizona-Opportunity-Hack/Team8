@@ -33,6 +33,9 @@ class LeftNav extends Component {
             <Link to="/parent">Parents</Link>
           </li>
           <li>
+            <Link to="/report">Generate Report</Link>
+          </li>
+          <li>
             <a className="a" onClick={this.handleLogout.bind(this)}>
               Logout
             </a>

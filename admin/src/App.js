@@ -18,12 +18,17 @@ import ParentList from "./components/ParentList";
 import ParentForm from "./components/ParentForm";
 import MedicineForm from "./components/medicineForm";
 import ParentDetail from "./components/ParentDetail";
+import Report from "./components/Report";
 import Header from "./components/Header";
 import MedicineList from "./components/MedicineList";
 import { PrivateRoute } from "./components/PrivateRoute";
 import LeftNav from "./components/LeftNav";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loaded: false };
+  }
   componentDidMount() {
     console.log("HErEREERERERERERERER");
     this.props.parentAction.fetchParents();
@@ -72,6 +77,7 @@ class App extends Component {
                 <PrivateRoute exact path="/house" component={HouseList} />
                 <PrivateRoute exact path="/house/:id" component={HouseForm} />
                 <PrivateRoute exact path="/parent" component={ParentList} />
+                <PrivateRoute exact path="/report" component={Report} />
                 <PrivateRoute exact path="/parent/:id" component={ParentForm} />
                 <PrivateRoute
                   exact

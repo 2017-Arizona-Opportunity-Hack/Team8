@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, escape, request, render_template, jsonify
+from flask import Flask, session, redirect, url_for, escape, request, render_template, jsonify,Response,send_file,make_response
 from pymongo import MongoClient, ReturnDocument
 import datetime
 import json
@@ -420,6 +420,17 @@ def addMedicine():
 
     client.close()
     return jsonify({'success':0,'errorMessage':'error'})
+
+@app.route("/getPlotCSV")
+def getPlotCSV():
+    # with open("outputs/Adjacency.csv") as fp:
+    #     csv = fp.read()
+    csv = '1,2,3\n4,5,6\n'
+    return Response(
+        csv,
+        mimetype="text/csv",
+        headers={"Content-disposition":
+                 "attachment; filename=myplot.csv"})
 
 @app.route('/updateMedicine',methods=["POST"])
 @cross_origin()
@@ -858,7 +869,6 @@ def updateHouse():
     db, client = connect_to_db()
     try:
         name = request.form['house_name']
-        print name
         address = request.form['address']
         _id = request.form['_id']
         db.Houses.find_one_and_update({'_id': ObjectId(_id)}, {"$set":{"name":name,"address":address}}, upsert=False)
@@ -870,50 +880,68 @@ def updateHouse():
     client.close()
     return jsonify({"success":0,"errorMessage":"need post request"})
 
-'''
+
 @app.route('/getSchedule', methods = ["POST"])
 @cross_origin()
 def getMedSchedule():
-    if request.method == 'POST':
-        start_date = datetime.datetime(2017, 6, 9, 11, 13, 3, 57000)
-        end_date = datetime.datetime.now()
-        db, client = connect_to_db()
-        medschedule = db.MedicineSchedule.find({'AdministrationTime':{'$gte': start_date, '$lte':end_date}},{"_id":0})
-        list1 = []
-        for i in medschedule:
-            print i
-            list1.append(i)
+    db, client = connect_to_db()
+    print "Here"
+
+
+    child_id = request.form['child_id']
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+
+
+
+    try:
+        
+        medschedule = db.MedicineSchedule.find({'child_id':child_id,'date':{'$gte': start_date, '$lte':end_date}},{"_id":0})
+
         client.close()
-        import csv
-        with open('some.csv', 'wb') as f:
-            writer = csv.writer(f)
-            headings = ['Child Name',
-                        "Physician Name",
-                        "Physician Contact No",
-                        "Medicine Name",
-                        "Reason for medicine",
-                        "Prescribed date",
-                        "Dosage",
-                        "Date Given",
-                        "Time Given",
-                        "House Visit"
-                        ]
-            writer.writerow(headings)
+        csv = 'Child Name,Date,Medicine Name,Dosage,Reason for medicine,Prescribed date,Prescribed Administration Time,Date and Time Administered,' \
+        + 'Physician Name,Physician Contact,House Visit\n'
+        child_name=""
+        count =0
+        for schedule in medschedule:
+            count+=1
+            child_name = schedule['child_name'].replace(" ","")
+            done = schedule['done'];
+            house_visit = "No";
+            administration_time = "As Needed"
+            if done == 'True':
+                done = schedule['actual_time'].strftime('%Y-%m-%d %H:%M')
+            elif done == 'False':
+                done = "Not Administered"
+            else:
+                done = "N/A"
+                house_visit="Yes"
 
-            for dict in list1:
-                name = dict['first_name']+" "+dict["last_name"]
-                physician = dict["physician"]
-                physician_phone_no = dict["physician_phone_no"]
-                med_name = dict["med_name"]
-                reason = dict["reason"]
-                prescribed_date = dict["prescribed_date"]
-                Dosage = dict["Dosage"]
-                dategiven = str(dict["AdministrationTime"].date())
-                timegiven = str(dict["AdministrationTime"].time())
-                house_visit = not(dict["toggle_inhouse"])
-                writer.writerow([name, physician,physician_phone_no,med_name,reason,prescribed_date,Dosage,dategiven,timegiven, house_visit])
+            try:
+                administration_time = schedule['administration_time']
+            except:
+                pass
 
-        return "true"
-'''
+            csv = csv + schedule['child_name'] + "," + schedule['date'] + "," + schedule['medicine_name'] + "," + schedule['dosage'] \
+            + "," + schedule['reason'] + "," + schedule['prescribed_date'] + "," + administration_time + "," + done + "," + schedule['physician_name'] \
+            + "," + schedule['physician_phone'] + ","  + house_visit + "\n"
+
+        response = make_response(csv)
+        cd = 'attachment; filename=mycsv.csv'
+        response.headers['Content-Disposition'] = cd 
+        response.mimetype='text/csv'
+
+        if count>0:    
+            return response
+        else:
+            return jsonify({'success':0,'errorMessage':'no data'})
+
+
+    except Exception as e:
+        print e;
+
+    client.close()
+    return jsonify({'success':0})
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,threaded=True)

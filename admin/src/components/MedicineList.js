@@ -30,41 +30,63 @@ class MedicineList extends Component {
   render() {
     console.log(this.state);
     if (this.state.loaded) {
-      return (
-        <div className="container">
-          <div className="row">
-            <div className="col btn-add">
-              <Link
-                className="btn btn-outline-info"
-                to={{
-                  pathname: `/child/${this.props.match.params.id}/medicine/add`
-                }}
-              >
-                Add a New Medicine
-              </Link>
+      if (this.props.medicines.length > 0) {
+        return (
+          <div className="container">
+            <div className="row">
+              <div className="col btn-add">
+                <Link
+                  className="btn btn-outline-info"
+                  to={{
+                    pathname: `/child/${this.props.match.params
+                      .id}/medicine/add`
+                  }}
+                >
+                  Add a New Medicine
+                </Link>
+              </div>
             </div>
-          </div>
 
-          <div className="row">
-            <div className="col">
-              <table className="table table-hover">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Reason</th>
-                    <th>Physician Details</th>
-                    <th>Schedule</th>
-                    <th>Administration Times</th>
-                    <th>Start Date</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>{this.getAllMedicines()}</tbody>
-              </table>
+            <div className="row">
+              <div className="col">
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Reason</th>
+                      <th>Physician Details</th>
+                      <th>Schedule</th>
+                      <th>Administration Times</th>
+                      <th>Start Date</th>
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody>{this.getAllMedicines()}</tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      } else {
+        return (
+          <div className="container">
+            No medicines added
+            <div className="row">
+              <div className="col btn-add">
+                <Link
+                  className="btn btn-outline-info"
+                  to={{
+                    pathname: `/child/${this.props.match.params
+                      .id}/medicine/add`
+                  }}
+                >
+                  Add a New Medicine
+                </Link>
+              </div>
+            </div>
+          </div>
+        );
+      }
     } else {
       return "Loading";
     }
