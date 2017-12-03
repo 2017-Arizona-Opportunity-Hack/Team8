@@ -54,7 +54,7 @@ class MedLogList extends Component {
 
   generateListItems(arr) {
     meds = [];
-    // console.log("arr", arr);
+    console.log("in MedLogList >>> arr", arr);
     for (i = 0; i < arr.length; i++) {
       med = {
         med_name: arr[i].medicine_name,
@@ -62,8 +62,8 @@ class MedLogList extends Component {
         dosage: arr[i].dosage,
         schedule_id: arr[i]._id,
         done: arr[i].done,
-        toggle: arr[i].toggle,
-        // toggle: true,
+        // toggle: arr[i].toggle,
+        toggle: true,
         date: arr[i].date,
         reason: arr[i].reason,
         time: arr[i].administration_time
@@ -71,6 +71,11 @@ class MedLogList extends Component {
       meds.push(med);
     }
     this.setState({ med_details: meds, loading: false });
+  }
+
+  updateListItems(id) {
+    let newList = this.state.med_details.filter(med => med.schedule_id !== id);
+    this.setState( { med_details: newList } );
   }
 
   render() {
@@ -94,7 +99,7 @@ class MedLogList extends Component {
           <ListView
             style={styles.contentContainer}
             dataSource={ds.cloneWithRows(this.state.med_details)}
-            renderRow={data => <MedLog data={data} />}
+            renderRow={data => <MedLog data={data} updateListItems={(id) => this.updateListItems(id)} />}
           />
         </View>
       );

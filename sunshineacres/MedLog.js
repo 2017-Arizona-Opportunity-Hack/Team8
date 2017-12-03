@@ -7,23 +7,26 @@ class MedLog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      done: this.props.done
+      done: this.props.data.done
     };
   }
 
   setStatus() {
-    if (!this.props.toggle) return "ON LEAVE";
+    if (!this.props.data.toggle) return "ON LEAVE";
     if (this.state.done) return "DONE";
     else return "LOG";
   }
 
   render() {
-    console.log('in MedLog >>> props', this.props);
+    // console.log('in MedLog >>> state', this.state);
+    // console.log('in MedLog >>> props', this.props);
     let { med_name,
       date,
       time,
       dosage,
       reason,
+      toggle,
+      schedule_id,
       special_instructions } = this.props.data;
     return (
       <View>
@@ -44,11 +47,11 @@ class MedLog extends Component {
               marginRight: 0,
               marginBottom: 0
             }}
-            disabled={!this.props.toggle}
+            disabled={!toggle}
             onPress={() => {
               let formdata = new FormData();
-              formdata.append("schedule_id", this.props.schedule_id);
-              console.log('in MedLog >>> formdata', formdata);
+              formdata.append("schedule_id", schedule_id);
+              // console.log('in MedLog >>> formdata', formdata);
               fetch("https://stormy-gorge-54252.herokuapp.com/logMedicineGiven", {
                 method: "POST",
                 headers: {
@@ -56,8 +59,14 @@ class MedLog extends Component {
                 },
                 body: formdata
               })
+                .then(response => response.json())
                 .then(response => {
-                  this.setState({ done: true })
+                  console.log('in MedLog >>> logMedicineGiven props', this.props);
+                  console.log('in MedLog >>> logMedicineGiven response', response);
+                  console.log('in MedLog >>> logMedicineGiven before state', this.state);
+                  this.setState({ done: true });
+                  console.log('in MedLog >>> logMedicineGiven after state', this.state);
+                  this.props.updateListItems(response._id);
               })
                 .catch(error => {
                   console.error(error);
