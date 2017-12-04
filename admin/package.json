@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "axios": "^0.17.1",
     "moment": "^2.19.3",
@@ -25,10 +25,7 @@
     "webpack": "^3.8.1"
   },
   "babel": {
-    "presets": [
-      "es2015",
-      "react"
-    ]
+    "presets": ["es2015", "react"]
   },
   "scripts": {
     "start": "react-scripts start",
