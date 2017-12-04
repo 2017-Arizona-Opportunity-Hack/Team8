@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Text, Image } from 'react-native';
+import { Platform, StyleSheet, View, Text, Image, Alert } from 'react-native';
 import { Card, Button } from "react-native-elements";
 
 class MedLog extends Component {
@@ -15,6 +15,25 @@ class MedLog extends Component {
     if (!this.props.data.toggle) return "ON LEAVE";
     if (this.state.done) return "DONE";
     else return "LOG";
+  }
+
+  processLog(id) {
+    Alert.alert(
+      "Confirm",
+      "Are you sure you want to log the medication?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Yes", onPress: () => {
+          this.setState({ done: true });
+          this.props.updateListItems(id);
+        }}
+      ],
+      { cancelable: false }
+    );
   }
 
   render() {
@@ -51,7 +70,6 @@ class MedLog extends Component {
             onPress={() => {
               let formdata = new FormData();
               formdata.append("schedule_id", schedule_id);
-              // console.log('in MedLog >>> formdata', formdata);
               fetch("https://stormy-gorge-54252.herokuapp.com/logMedicineGiven", {
                 method: "POST",
                 headers: {
@@ -60,14 +78,7 @@ class MedLog extends Component {
                 body: formdata
               })
                 .then(response => response.json())
-                .then(response => {
-                  console.log('in MedLog >>> logMedicineGiven props', this.props);
-                  console.log('in MedLog >>> logMedicineGiven response', response);
-                  console.log('in MedLog >>> logMedicineGiven before state', this.state);
-                  this.setState({ done: true });
-                  console.log('in MedLog >>> logMedicineGiven after state', this.state);
-                  this.props.updateListItems(response._id);
-              })
+                .then(response => this.processLog(response._id))
                 .catch(error => {
                   console.error(error);
                 });
