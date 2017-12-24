@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Text, Image, Alert } from 'react-native';
+import { Platform, StyleSheet, ScrollView, View, Text, Image, Alert } from 'react-native';
 import { Card, Button } from "react-native-elements";
 
 class MedLog extends Component {
@@ -48,7 +48,7 @@ class MedLog extends Component {
       schedule_id,
       special_instructions } = this.props.data;
     return (
-      <View>
+      <ScrollView>
         <Card title={med_name}>
           <Text style={{ width: 300 }}>Date: {date}</Text>
           <Text style={{ width: 300 }}>Time: {time}</Text>
@@ -86,7 +86,7 @@ class MedLog extends Component {
             title={this.setStatus()}
           />
         </Card>
-      </View>
+      </ScrollView>
     );
   }
 

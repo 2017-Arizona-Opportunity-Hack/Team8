@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, View, Text, Image } from 'react-native';
+import { Platform, StyleSheet, ScrollView, View, Text, Image } from 'react-native';
 import { Card, Button, FormLabel, FormInput } from 'react-native-elements';
 
 class LoginScreen extends Component {
@@ -7,9 +7,12 @@ class LoginScreen extends Component {
     super();
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      keyboard: { height: 0 }
     }
   }
+
+  updateState = (state, obj) => this.setState(prev => Object.assign(prev[state], obj))
 
   handleSignIn(navigate) {
     let formdata = new FormData();
@@ -35,7 +38,7 @@ class LoginScreen extends Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View style={{ paddingVertical: 10 }}>
+      <ScrollView>
         <Card containerStyle={{ borderRadius: 10 }}>
           <Image
             source={require("./images/logo.png")}
@@ -44,10 +47,13 @@ class LoginScreen extends Component {
               marginBottom: 30
             }}
           />
+          <View style={{position: 'relative', bottom: this.state.keyboard.height}}>
           <FormLabel>Username</FormLabel>
           <FormInput
             placeholder="Please enter your username"
             onChangeText={username => this.setState({ username })}
+            onFocus={() => this.updateState('keyboard', {height: 60})}
+            onBlur={() => this.updateState('keyboard', {height: 0})}
             autoCapitalize="none"
             value={this.state.email}
           />
@@ -56,8 +62,11 @@ class LoginScreen extends Component {
             secureTextEntry
             placeholder="Please enter your password"
             onChangeText={password => this.setState({ password })}
+            onFocus={() => this.updateState('keyboard', {height: 80})}
+            onBlur={() => this.updateState('keyboard', {height: 0})}
             value={this.state.password}
           />
+          </View>
           <Button
             buttonStyle={{
               marginTop: 30,
@@ -68,7 +77,7 @@ class LoginScreen extends Component {
             onPress={() => this.handleSignIn(navigate)}
           />
         </Card>
-      </View>
+      </ScrollView>
     );
   }
 

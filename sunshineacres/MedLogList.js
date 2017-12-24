@@ -92,7 +92,7 @@ class MedLogList extends Component {
     } else {
       console.log("med_details", this.state.med_details);
       return (
-        <View>
+        <ScrollView>
           <View style={styles.headerContainer}>
             <Text style={styles.heading}>{this.state.child_name}</Text>
           </View>
@@ -101,7 +101,7 @@ class MedLogList extends Component {
             dataSource={ds.cloneWithRows(this.state.med_details)}
             renderRow={data => <MedLog data={data} updateListItems={(id) => this.updateListItems(id)} />}
           />
-        </View>
+        </ScrollView>
       );
     }
   }

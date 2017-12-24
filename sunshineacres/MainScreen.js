@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Platform,
   StyleSheet,
+  ScrollView,
   Text,
   Image,
   View,
@@ -141,7 +142,7 @@ class MainScreen extends Component {
     console.log("state", this.state);
 
     return (
-      <View style={{ paddingVertical: 10 }}>
+      <ScrollView style={{ paddingVertical: 10 }}>
         <Card containerStyle={{ borderRadius: 10 }}>
           <Image
             source={require("./images/logo.png")}
@@ -262,7 +263,7 @@ class MainScreen extends Component {
             style={{ marginTop: 40 }}
           />
         </Card>
-      </View>
+      </ScrollView>
     );
   }
 
