@@ -31,7 +31,7 @@ class MainScreen extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        // console.log('in MainScreen componentDidMount response >>>', response)
+        //console.log('in MainScreen componentDidMount response >>>', response)
         this.setState({
           house: response.all_houses,
           loading: false,
@@ -44,6 +44,7 @@ class MainScreen extends Component {
   }
 
   fetchChildren() {
+    //console.log('in fetchChildren >>> state:', this.state);
     let formdata = new FormData();
     formdata.append("house_id", this.state.house_id);
     fetch("https://stormy-gorge-54252.herokuapp.com/getAllChildrenForHouse", {
@@ -55,17 +56,29 @@ class MainScreen extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        console.log("in fetchChildren >>> response", response);
-        this.setState({
-          child: response.all_children,
-          loading: false,
-          showChild: true,
-          child_id: response.all_children[0]._id,
-          child_name: response.all_children[0].firstname,
-          child_toggle: true
-          // child_toggle: response.toggle
-        });
-        console.log('in fetchChildren >>> this.state.child', this.state.child);
+        // console.log("in fetchChildren >>> response", response);
+        // console.log("in fetchChildren >>> all_children.length", response.all_children.length);
+        if (response.all_children.length > 0) {
+          this.setState({
+            child: response.all_children,
+            loading: false,
+            showChild: true,
+            child_id: response.all_children[0]._id,
+            child_name: response.all_children[0].firstname,
+            child_toggle: true
+            // child_toggle: response.toggle
+          });
+        } else {
+          Alert.alert(
+            'Select House',
+            'Please select another house, there is no children in this house',
+            [
+              {text: 'OK', onPress: () => console.log('OK Pressed')}
+            ],
+            { cancelable: false }
+          );
+        }
+        // console.log('in fetchChildren >>> this.state.child', this.state.child);
       })
       .catch(error => {
         console.error(error);
@@ -88,11 +101,12 @@ class MainScreen extends Component {
 
   updateHouse = house => {
     this.setState({ house_id, loading: false });
+    // console.log('in updateHouse: house_id:', house_id);
   };
 
   updateChild = child => {
     this.setState({ child, loading: false });
-    console.log("child", child);
+    // console.log("in updateChild: child", child);
   };
 
   showMore() {
@@ -123,7 +137,7 @@ class MainScreen extends Component {
   changeToggle() {
     let formdata = new FormData();
     formdata.append("child_id", this.state.child_id);
-    console.log('in changeToggle >>> formdata:', formdata);
+    // console.log('in changeToggle >>> formdata:', formdata);
     fetch("https://stormy-gorge-54252.herokuapp.com/togglechild", {
       method: "POST",
       headers: {
@@ -139,7 +153,7 @@ class MainScreen extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    console.log("state", this.state);
+    // console.log("state", this.state);
 
     return (
       <ScrollView style={{ paddingVertical: 10 }}>
@@ -166,18 +180,24 @@ class MainScreen extends Component {
             <View style={styles.container}>
               <Picker
                 selectedValue={this.state.house_id}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({
-                    house_id: itemValue,
-                    showChild: false,
-                    showOptions: false
-                  })}
+                onValueChange={
+                  (itemValue, itemIndex) => {
+                    // console.log('in onValueChange, itemValue: ', itemValue);
+                    // console.log('in onValueChange, itemIndex: ', itemIndex);
+                    this.setState({
+                      house_id: itemValue,
+                      showChild: false,
+                      showOptions: false
+                    });
+                  }
+                }
                 style={{ width: 300, height: 50 }}
                 itemStyle={{ height: 50 }}
               >
                 {this.state.house.map((l, i) => {
+                  // console.log('in House Picker, l: ', l);
                   return (
-                    <Picker.Item value={l.house_id} label={l.name} key={i} />
+                    <Picker.Item value={l._id} label={l.name} key={i} />
                   );
                 })}
               </Picker>
